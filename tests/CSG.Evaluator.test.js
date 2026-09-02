@@ -47,6 +47,40 @@ describe( 'Evaluator', () => {
 
 	} );
 
+	it( 'should evaluate and return Float64 intersection geometry.', () => {
+
+		function createFloat64Box( x ) {
+
+			const geometry = new BoxGeometry( 1, 1, 1 );
+			for ( const name of [ 'position', 'normal' ] ) {
+
+				const source = geometry.getAttribute( name );
+				geometry.setAttribute(
+					name,
+					new BufferAttribute( new Float64Array( source.array ), source.itemSize ),
+				);
+
+			}
+
+			const brush = new Brush( geometry );
+			brush.position.x = x;
+			brush.updateMatrixWorld( true );
+			return brush;
+
+		}
+
+		const evaluator = new Evaluator();
+		evaluator.attributes = [ 'position', 'normal' ];
+		evaluator.useGroups = false;
+		evaluator.useCDTClipping = true;
+		const result = evaluator.evaluate( createFloat64Box( 0 ), createFloat64Box( 0.5 ), INTERSECTION );
+
+		expect( result.geometry.attributes.position.array ).toBeInstanceOf( Float64Array );
+		expect( result.geometry.attributes.normal.array ).toBeInstanceOf( Float64Array );
+		expect( result.geometry.attributes.position.count ).toBeGreaterThan( 0 );
+
+	} );
+
 	describe( 'Just Touch Cases', () => {
 
 		it( 'case 1', () => {

@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Changed
+- Require three-mesh-bvh 0.9.11 or newer for the targetLeafSize BVH option.
+
+### Fixed
+- Align reusable attribute buffers so they can switch safely to Float64Array.
+- Classify connected whole-triangle components by majority vote and reject disjoint component bounds before raycasting.
+- Keep non-coplanar singleton fragments in their original half-edge component.
+
 ## [0.0.18] - 2026-02-17
 ### Added
 - Small performance improvement during whole triangle traversal.
