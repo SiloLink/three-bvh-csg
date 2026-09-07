@@ -363,16 +363,6 @@ function performSplitTriangleOperations(
 
 		const { triangles, triangleIndices = [], triangleConnectivity = [] } = splitter;
 
-		// A non-coplanar point or zero-length-edge intersection can leave the source
-		// triangle unsplit. Keep that triangle in its original half-edge component
-		// instead of classifying it as an isolated fragment.
-		const hasCoplanarIntersections = Boolean( coplanarIndices && coplanarIndices.size );
-		if ( triangles.length === 1 && ! hasCoplanarIntersections ) {
-
-			continue;
-
-		}
-
 		effectiveSplitIds.add( ia );
 
 		// cache all the attribute data in origA's local frame
