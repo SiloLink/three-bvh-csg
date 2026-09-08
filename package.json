@@ -14,7 +14,7 @@
     "lint": "eslint . && tsc --noEmit",
     "benchmark": "node ./benchmark/benchmark.js",
     "test": "vitest run",
-    "build-cdt2d": "esbuild node_modules/cdt2d/cdt2d.js --bundle --format=esm --outfile=src/libs/cdt2d.js --banner:js='// Auto-generated ESM bundle of cdt2d'",
+    "build-cdt2d": "esbuild node_modules/cdt2d/cdt2d.js --alias:robust-in-sphere=./scripts/cdt-incircle.cjs --bundle --format=esm --outfile=src/libs/cdt2d.js --banner:js='// Auto-generated ESM bundle of cdt2d'",
     "prepublishOnly": "npm run build"
   },
   "files": [
@@ -53,9 +53,13 @@
     "@eslint/js": "^9.0.0",
     "@types/three": "^0.179.0",
     "@vitest/eslint-plugin": "^1.5.0",
+    "cdt2d": "1.0.0",
+    "esbuild": "0.25.9",
     "eslint": "^9.0.0",
     "eslint-config-mdcs": "^5.0.0",
     "globals": "^16.5.0",
+    "robust-in-sphere": "1.2.1",
+    "robust-predicates": "3.0.3",
     "rollup": "^2.70.0",
     "three": "^0.179.0",
     "three-csg-ts": "^3.1.10",
@@ -63,7 +67,6 @@
     "typescript": "^5.6.0",
     "typescript-eslint": "^8.48.1",
     "vite": "^6.2.2",
-    "vitest": "^4.0.14",
-    "cdt2d": "^1.0.0"
+    "vitest": "^4.0.14"
   }
 }
