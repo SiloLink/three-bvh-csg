@@ -1,7 +1,7 @@
 {
-  "name": "three-bvh-csg",
+  "name": "@silolink/three-bvh-csg",
   "version": "0.0.18",
-  "description": "A fast, flexible, dynamic CSG implementation on top of three-mesh-bvh",
+  "description": "SiloLink fork of three-bvh-csg for BVH-based constructive solid geometry",
   "main": "build/index.umd.cjs",
   "module": "src/index.js",
   "type": "module",
@@ -18,6 +18,7 @@
     "prepublishOnly": "npm run build"
   },
   "files": [
+    "CHANGELOG.md",
     "src/*",
     "build/*"
   ],
@@ -37,14 +38,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gkjohnson/three-bvh-csg.git"
+    "url": "git+https://github.com/SiloLink/three-bvh-csg.git"
   },
   "author": "Garrett Johnson <garrett.kjohnson@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/gkjohnson/three-bvh-csg/issues"
+    "url": "https://github.com/SiloLink/three-bvh-csg/issues"
   },
-  "homepage": "https://github.com/gkjohnson/three-bvh-csg#readme",
+  "homepage": "https://github.com/SiloLink/three-bvh-csg#readme",
   "peerDependencies": {
     "three": ">=0.179.0",
     "three-mesh-bvh": ">=0.9.11"
@@ -64,6 +65,11 @@
     "typescript-eslint": "^8.48.1",
     "vite": "^6.2.2",
     "vitest": "^4.0.14",
-    "cdt2d": "^1.0.0"
+    "cdt2d": "^1.0.0",
+    "esbuild": "0.25.9"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }
