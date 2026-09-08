@@ -140,9 +140,20 @@ export class Evaluator {
 			const targetGeometry = brush.geometry;
 			geometryBuilders[ i ].buildGeometry( targetGeometry, groups );
 
-			// assign brush A's transform to the result so the geometry is in a stable position
-			a.matrixWorld.decompose( brush.position, brush.quaternion, brush.scale );
-			brush.updateMatrix();
+			// Geometry is in A's frame. Keep the full affine transform, including shear.
+			if ( brush.parent ) {
+
+				brush.parent.updateWorldMatrix( true, false );
+				brush.matrix.copy( brush.parent.matrixWorld ).invert().multiply( a.matrixWorld );
+
+			} else {
+
+				brush.matrix.copy( a.matrixWorld );
+
+			}
+
+			brush.matrix.decompose( brush.position, brush.quaternion, brush.scale );
+			brush.matrixAutoUpdate = false;
 			brush.matrixWorld.copy( a.matrixWorld );
 
 			if ( useGroups ) {
