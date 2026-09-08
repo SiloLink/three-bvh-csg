@@ -191,6 +191,8 @@ evaluate(
 
 Performs the given `operation` on `brushA` with `brushB`. If no target is provided then a new `Brush` will be created with the new geometry. Otherwise the provided Brush will be _modified in place_ and geometry disposed or marked for update as needed.
 
+Results preserve the full affine transform of `brushA`, including shear, and account for an existing target parent. The result uses `matrixAutoUpdate = false`; edit its `matrix` to preserve affine transforms. To control it through `position`, `quaternion`, and `scale`, set `matrixAutoUpdate = true`, which replaces any shear with a TRS transform.
+
 If arrays are provided for the "targets" and "operations" arguments then multiple results from different operations can be produced at once with minimal additional overhead.
 
 
