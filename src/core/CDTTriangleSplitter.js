@@ -18,6 +18,7 @@ const _vectorPool = new Pool( () => new Vector3() );
 function edgesToIndices( edges, outputVertices, outputIndices, epsilonScale ) {
 
 	_paramPool.clear();
+	_vectorPool.clear();
 
 	outputVertices.length = 0;
 	outputIndices.length = 0;
