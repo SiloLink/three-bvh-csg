@@ -1,0 +1,59 @@
+--- a/backend/src/core/narrow/narrow-phase.js
++++ b/backend/src/core/narrow/narrow-phase.js
+@@ -524,10 +524,6 @@
+   geometry.setIndex(index instanceof Uint32Array
+     ? new THREE.Uint32BufferAttribute(index, 1)
+     : new THREE.Uint16BufferAttribute(index, 1));
+-  // computeVertexNormals reuses an existing normal attribute. Preallocate it as
+-  // float64; otherwise three.js creates a Float32BufferAttribute by default.
+-  geometry.setAttribute('normal', new THREE.BufferAttribute(new Float64Array(positionArray.length), 3));
+-  geometry.computeVertexNormals();
+   geometry.computeBoundingBox();
+   geometry.computeBoundingSphere();
+   return geometry;
+@@ -857,7 +853,7 @@
+ 
+ export function createCsgEvaluator() {
+   const evaluator = new Evaluator();
+-  evaluator.attributes = ['position', 'normal'];
++  evaluator.attributes = ['position'];
+   evaluator.useGroups = false;
+   evaluator.useCDTClipping = true;
+   return evaluator;
+--- a/csg/src/core/CDTTriangleSplitter.js
++++ b/csg/src/core/CDTTriangleSplitter.js
+@@ -18,6 +18,7 @@
+ function edgesToIndices( edges, outputVertices, outputIndices, epsilonScale ) {
+ 
+ 	_paramPool.clear();
++	_vectorPool.clear();
+ 
+ 	outputVertices.length = 0;
+ 	outputIndices.length = 0;
+--- a/csg/src/core/operations/operationsUtils.js
++++ b/csg/src/core/operations/operationsUtils.js
+@@ -90,7 +90,7 @@
+ 					if ( isCoplanarIntersection ) {
+ 
+ 						// coplanar
+-						const count = getCoplanarIntersectionEdges( triangleA, triangleB, _coplanarEdges );
++						const count = coplanarCount;
+ 						for ( let i = 0; i < count; i ++ ) {
+ 
+ 							const e = _edgePool.getInstance().copy( _coplanarEdges[ i ] );
+--- a/csg/src/libs/cdt2d.js
++++ b/csg/src/libs/cdt2d.js
+@@ -1,3 +1,4 @@
++import { incircle as adaptiveInCircle } from '__CSG_RESEARCH_ROOT__/audits/csg-narrow-20260907/root/predicate-lab/node_modules/robust-predicates/index.js';
+ // Auto-generated ESM bundle of cdt2d
+ var __getOwnPropNames = Object.getOwnPropertyNames;
+ var __commonJS = (cb, mod) => function __require() {
+@@ -1134,7 +1135,7 @@
+ var require_delaunay = __commonJS({
+   "node_modules/cdt2d/lib/delaunay.js"(exports, module) {
+     "use strict";
+-    var inCircle = require_in_sphere()[4];
++    var inCircle = (a, b, c, d) => adaptiveInCircle(a[0], a[1], b[0], b[1], c[0], c[1], d[0], d[1]);
+     var bsearch = require_search_bounds();
+     module.exports = delaunayRefine;
+     function testFlip(points, triangulation, stack, a, b, x) {

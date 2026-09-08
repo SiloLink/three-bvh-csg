@@ -1,0 +1,52 @@
+--- a/backend/src/core/narrow/narrow-phase.js
++++ b/backend/src/core/narrow/narrow-phase.js
+@@ -1,3 +1,4 @@
++import { assessVerticalRejection } from '__CSG_RESEARCH_ROOT__/audits/csg-narrow-20260907/vertical-bound/policy.mjs';
+ import fs from 'node:fs/promises';
+ import path from 'node:path';
+ import { performance } from 'node:perf_hooks';
+@@ -54,6 +55,8 @@
+     pairCount: 0,
+     csgOperationCount: 0,
+     csgAabbRejectedCount: 0,
++    verticalEarlyRejectedCount: 0,
++    verticalBoundsMs: 0,
+     duplicateFastPathCount: 0,
+     errorCount: 0,
+     fillRatioFilteredCount: 0,
+@@ -1040,6 +1043,35 @@
+       });
+       addElapsedMs(timing, 'formatResultMs', formatStartedAtMs);
+       return reportRow;
++    }
++
++    const verticalStartedAt = performance.now();
++    const verticalDecision = assessVerticalRejection({
++      brushesA, brushesB, verticalMm: row.toleranceMm.vertical,
++      couldBeDuplicate: classifyClash({
++        collision: true,
++        volumeA: metricsA.volumeMm3, volumeB: metricsB.volumeMm3,
++        intersectionVolume: Infinity,
++        boxA: metricsA.box, boxB: metricsB.box,
++        boxContainmentTolerance: BBOX_CONTAINMENT_TOLERANCE_MM / SOURCE_UNITS_TO_MM,
++        duplicateVolumeDiffRatio: DUPLICATE_VOLUME_DIFF_RATIO,
++        intersectionVolumeMatchRatio: INTERSECTION_VOLUME_MATCH_RATIO,
++      }) === 'Duplicate',
++    });
++    addElapsedMs(timing, 'verticalBoundsMs', verticalStartedAt);
++    if (verticalDecision.eligible) {
++      if (timing) timing.verticalEarlyRejectedCount++;
++      // Isolated experiment: the final negative is certified from input geometry.
++      // CSG intersection volume and raw classification were not computed.
++      const report = createNarrowPhaseReportRow(row, {
++        collision: false, clashType: 'NA', volumeMm3: NaN,
++        boxSizeMm: { x: NaN, y: NaN, z: NaN },
++      });
++      if (options.includeTraceFields) report.Trace = {
++        rawCollision: null, filteredByTolerance: true, filteredByFillRatio: null,
++        inputHeightUpperMm: verticalDecision.heightUpperMm,
++      };
++      return report;
+     }
+ 
+     const evaluator = options.evaluator || createCsgEvaluator();

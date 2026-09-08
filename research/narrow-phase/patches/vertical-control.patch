@@ -1,0 +1,36 @@
+--- a/csg/src/core/Evaluator.js
++++ b/csg/src/core/Evaluator.js
+@@ -142,7 +142,8 @@
+ 
+ 			// assign brush A's transform to the result so the geometry is in a stable position
+ 			a.matrixWorld.decompose( brush.position, brush.quaternion, brush.scale );
+-			brush.updateMatrix();
++			brush.matrixAutoUpdate = false;
++			brush.matrix.copy( a.matrixWorld );
+ 			brush.matrixWorld.copy( a.matrixWorld );
+ 
+ 			if ( useGroups ) {
+--- a/csg/src/core/operations/operations.js
++++ b/csg/src/core/operations/operations.js
+@@ -367,11 +367,7 @@
+ 		// triangle unsplit. Keep that triangle in its original half-edge component
+ 		// instead of classifying it as an isolated fragment.
+ 		const hasCoplanarIntersections = Boolean( coplanarIndices && coplanarIndices.size );
+-		if ( triangles.length === 1 && ! hasCoplanarIntersections ) {
+-
+-			continue;
+-
+-		}
++// Isolated control: classify all intersection fragments, preserving cut boundaries.
+ 
+ 		effectiveSplitIds.add( ia );
+ 
+@@ -409,7 +405,7 @@
+ 				if ( cpt.containsPoint( _midpoint ) ) {
+ 
+ 					cpt.getNormal( _coplanarNormal );
+-					hitSide = _normal.dot( _coplanarNormal ) > 0 ? COPLANAR_ALIGNED : COPLANAR_OPPOSITE;
++					hitSide = _normal.dot( _coplanarNormal ) * ( _matrix.determinant() < 0 ? - 1 : 1 ) > 0 ? COPLANAR_ALIGNED : COPLANAR_OPPOSITE;
+ 					break;
+ 
+ 				}

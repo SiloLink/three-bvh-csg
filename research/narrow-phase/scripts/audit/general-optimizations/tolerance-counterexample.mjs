@@ -1,0 +1,22 @@
+import fs from 'node:fs';
+import * as T from '../../../review-artifacts/csg-pr2/head/node_modules/three/build/three.module.js';
+import {Brush,Evaluator,INTERSECTION,computeMeshVolume} from '../root/variants/adaptive-only/csg/src/index.js';
+import {convexHull2D,computeOrientedClashSize} from '../root/variants/adaptive-only/backend/src/core/geometry/oriented-box.js';
+import {classifyClash} from '../root/variants/adaptive-only/backend/src/core/narrow/collision-classification.js';
+import {shouldFilterOverlappingByTolerance} from '../root/variants/adaptive-only/backend/src/core/narrow/tolerance-filter.js';
+const points=JSON.parse(fs.readFileSync(new URL('./properties.json',import.meta.url))).rectangleCounterexample.points.map(p=>p.map(v=>v*.0042));
+const x0=Math.min(...points.map(p=>p[0])),x1=Math.max(...points.map(p=>p[0])),y0=Math.min(...points.map(p=>p[1])),y1=Math.max(...points.map(p=>p[1]));
+const ga=new T.BoxGeometry(x1-x0,y1-y0,.1);ga.translate((x0+x1)/2,(y0+y1)/2,.05);
+const hull=convexHull2D(points),shape=new T.Shape(hull.map(p=>new T.Vector2(...p)));
+const gb=new T.ExtrudeGeometry(shape,{depth:.1,bevelEnabled:false,steps:1});
+for(const g of [ga,gb])g.setAttribute('position',new T.BufferAttribute(new Float64Array(g.attributes.position.array),3));
+const a=new Brush(ga),b=new Brush(gb);a.updateMatrixWorld();b.updateMatrixWorld();const e=new Evaluator();e.useGroups=false;e.useCDTClipping=true;e.attributes=['position','normal'];const overlap=e.evaluate(a,b,INTERSECTION);
+function size(g){const v=g.attributes.position;const points=[];for(let i=0;i<v.count;i++)points.push([v.getX(i),v.getY(i),v.getZ(i)]);const s=computeOrientedClashSize(points);return {x:s.x*1000,y:s.y*1000,z:s.z*1000};}
+ga.computeBoundingBox();gb.computeBoundingBox();const volume=computeMeshVolume(overlap)*1e9;
+const clashType=classifyClash({collision:volume>1e-5,volumeA:computeMeshVolume(a)*1e9,volumeB:computeMeshVolume(b)*1e9,intersectionVolume:volume,boxA:ga.boundingBox,boxB:gb.boundingBox,boxContainmentTolerance:.001,duplicateVolumeDiffRatio:.01,intersectionVolumeMatchRatio:.99});
+const actualBox=size(overlap.geometry),aSize=size(ga),tolerance={horizontal:10,vertical:10};
+const result={outerBoxMm:aSize,intersectionBoxMm:actualBox,clashType,volumeMm3:volume,naiveInputWidthReject:aSize.y<=10.1,actualToleranceReject:shouldFilterOverlappingByTolerance(clashType,actualBox,tolerance)};
+const duplicateType=classifyClash({collision:true,volumeA:64,volumeB:64,intersectionVolume:64,boxA:ga.boundingBox,boxB:ga.boundingBox,boxContainmentTolerance:.001,duplicateVolumeDiffRatio:.01,intersectionVolumeMatchRatio:.99});
+result.duplicateExample={boxMm:{x:4,y:4,z:4},type:duplicateType,filtered:shouldFilterOverlappingByTolerance(duplicateType,{x:4,y:4,z:4},tolerance)};
+fs.writeFileSync(new URL('./tolerance-counterexample.json',import.meta.url),JSON.stringify(result,null,2));console.log(result);
+if(!result.naiveInputWidthReject||result.actualToleranceReject||clashType!=='Overlapping')throw new Error('counterexample did not reproduce');

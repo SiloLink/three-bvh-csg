@@ -1,0 +1,60 @@
+--- a/backend/src/core/narrow/narrow-phase.js
++++ b/backend/src/core/narrow/narrow-phase.js
+@@ -1,3 +1,4 @@
++import { assessVerticalRejection, recordVerticalDecision } from '__CSG_RESEARCH_ROOT__/audits/csg-narrow-20260907/vertical-bound/policy.mjs';
+ import fs from 'node:fs/promises';
+ import path from 'node:path';
+ import { performance } from 'node:perf_hooks';
+@@ -938,6 +939,7 @@
+   overlapObjects,
+   options,
+   timing,
++  verticalAudit,
+ }) {
+   const overlapBoxStartedAtMs = performance.now();
+   const normalizedBoxSize = getOrientedClashBoxSizeMm(overlapObjects);
+@@ -973,6 +975,7 @@
+       filteredByFillRatio: filteredByFillRatio === true,
+     };
+   }
++  if (verticalAudit) recordVerticalDecision(row, verticalAudit, reportRow, normalizedBoxSize, (timing?.csgEvaluateMs || 0) - verticalAudit.csgStartMs);
+   return reportRow;
+ }
+ 
+@@ -1023,6 +1026,20 @@
+     );
+     addElapsedMs(timing, 'metricsMs', metricsStartedAtMs);
+ 
++    const verticalAudit = assessVerticalRejection({
++      brushesA, brushesB, verticalMm: row.toleranceMm.vertical,
++      couldBeDuplicate: classifyClash({
++        collision: true,
++        volumeA: metricsA.volumeMm3, volumeB: metricsB.volumeMm3,
++        intersectionVolume: Infinity,
++        boxA: metricsA.box, boxB: metricsB.box,
++        boxContainmentTolerance: BBOX_CONTAINMENT_TOLERANCE_MM / SOURCE_UNITS_TO_MM,
++        duplicateVolumeDiffRatio: DUPLICATE_VOLUME_DIFF_RATIO,
++        intersectionVolumeMatchRatio: INTERSECTION_VOLUME_MATCH_RATIO,
++      }) === 'Duplicate',
++    });
++    verticalAudit.csgStartMs = timing?.csgEvaluateMs || 0;
++
+     if (haveExactSameBrushSet(brushesA, brushesB)) {
+       if (timing) {
+         timing.duplicateFastPathCount += 1;
+@@ -1037,6 +1054,7 @@
+         overlapObjects: brushesA,
+         options,
+         timing,
++        verticalAudit,
+       });
+       addElapsedMs(timing, 'formatResultMs', formatStartedAtMs);
+       return reportRow;
+@@ -1102,6 +1120,7 @@
+       overlapObjects: overlaps,
+       options,
+       timing,
++      verticalAudit,
+     });
+     addElapsedMs(timing, 'formatResultMs', formatStartedAtMs);
+     return reportRow;

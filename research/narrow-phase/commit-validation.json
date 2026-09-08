@@ -1,0 +1,846 @@
+{
+  "date": "2026-09-08",
+  "branch": "handoff-csg-optimization-research",
+  "branchBase": "8a53705c9613e2e15d753e5de0e0dc02e799a2d9",
+  "libraryCommits": [
+    {
+      "revision": "5c60e77e63b6db67b62e02f6b29bcdc42fedb588",
+      "change": "Mirror-aware coplanar classification"
+    },
+    {
+      "revision": "30f0aa6c8d0f9edd15c4b217957012d2de48e3eb",
+      "change": "Preserve exact affine result matrices"
+    },
+    {
+      "revision": "79183fbbf1b45a5008595a33ac3e638d18cb7e98",
+      "change": "Reset the CDT projection vector pool"
+    },
+    {
+      "revision": "cc8cb6ade3bb0b2a439502a7bf5b2276463ccdb1",
+      "change": "Build CDT with adaptive robust incircle"
+    },
+    {
+      "revision": "5bd07d41a73f74f56855a81ab2bdc86e3dd8a14d",
+      "change": "Conservative edge and point distance bounds"
+    }
+  ],
+  "bundleManifestSha256": "125b92f2f72e1530792c0bf93fba77cf47073e5cfbd92758d0c10d0305073951",
+  "handoffScriptSha256": "7d2f38ddc0ce6b8dc6e979256707b91fa029c470b3d6c56504ca2b3f9a6c3a82",
+  "method": "Apply five changes as separate root-source commits. Export the base and candidate directly from Git into a freshly prepared, independently installed historical runtime. Sequentially run both versions on six complete projects, alternating order per project. Validate CSV bytes, candidate counts, coverage and all evidence digests. Timings are one A/B round, not a stable production performance claim.",
+  "environment": {
+    "platform": "Darwin",
+    "node": "v24.16.0",
+    "three": "0.179.1",
+    "three-mesh-bvh": "0.9.11",
+    "vitest": "4.0.18",
+    "robust-predicates": "3.0.3"
+  },
+  "consumerRevision": "f890805d80f44a4e61c583eb7fe7b41b6a4c6b21",
+  "configuration": {
+    "workers": 3,
+    "batchSize": 100,
+    "geometryBudgetMiB": 1536,
+    "uiToleranceMm": 10,
+    "persistentWorkers": true,
+    "cacheObjects": true,
+    "sharedGeometryPreparation": true
+  },
+  "repositoryChecks": {
+    "testsPassed": 81,
+    "testsTodo": 1,
+    "testsFailed": 0,
+    "eslintErrors": 0,
+    "preExistingEslintWarnings": 11,
+    "typescriptPassed": true,
+    "buildPassed": true,
+    "generatedCDTMatchesCommit": true,
+    "esmUmdAndSourceSmoke": [
+      {
+        "format": "source",
+        "useCDTClipping": false,
+        "mirrorVolume": 1,
+        "affineVolume": 1,
+        "affineMatrixPreserved": true
+      },
+      {
+        "format": "source",
+        "useCDTClipping": true,
+        "mirrorVolume": 1,
+        "affineVolume": 1,
+        "affineMatrixPreserved": true
+      },
+      {
+        "format": "esm",
+        "useCDTClipping": false,
+        "mirrorVolume": 1,
+        "affineVolume": 1,
+        "affineMatrixPreserved": true
+      },
+      {
+        "format": "esm",
+        "useCDTClipping": true,
+        "mirrorVolume": 1,
+        "affineVolume": 1,
+        "affineMatrixPreserved": true
+      },
+      {
+        "format": "umd",
+        "useCDTClipping": false,
+        "mirrorVolume": 1,
+        "affineVolume": 1,
+        "affineMatrixPreserved": true
+      },
+      {
+        "format": "umd",
+        "useCDTClipping": true,
+        "mirrorVolume": 1,
+        "affineVolume": 1,
+        "affineMatrixPreserved": true
+      }
+    ],
+    "npmDryRunContainsResearch": false
+  },
+  "regressionCoverage": {
+    "mirror": {
+      "splitters": 2,
+      "positionArrayTypes": 2,
+      "axes": 3,
+      "mirroredOperandChoices": 3,
+      "relativeOffsets": 2,
+      "commonRotations": 2,
+      "solidOperations": 5,
+      "evaluations": 720
+    },
+    "affine": "Both splitters and position precisions; shear, parented targets, multiple targets, repeated evaluation, and matrixWorld updates.",
+    "pool": {
+      "loops": 100,
+      "beforeRetainedVectors": 30300,
+      "afterRetainedVectors": 10,
+      "outputHashesEqual": true
+    },
+    "adaptiveIncircle": {
+      "signComparisons": 100000,
+      "signMismatches": 0,
+      "constrainedTriangulations": 300,
+      "triangulationMismatches": 0
+    },
+    "distanceBounds": {
+      "comparisons": 2000000,
+      "falseRejects": 0
+    },
+    "analyticalBoxSweep": {
+      "count": 360,
+      "remainingFailures": [
+        {
+          "cdt": true,
+          "segments": 2,
+          "pos": [
+            0.25,
+            0,
+            0
+          ],
+          "bx": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "op": "INTERSECTION",
+          "expected": 0.125,
+          "actual": 0.14583333333333331,
+          "base": 0.14583333333333326
+        },
+        {
+          "cdt": true,
+          "segments": 2,
+          "pos": [
+            0.25,
+            0,
+            0
+          ],
+          "bx": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "op": "ADDITION",
+          "expected": 1,
+          "actual": 1.0208333333333333,
+          "base": 0.9583333333333333
+        },
+        {
+          "cdt": true,
+          "segments": 2,
+          "pos": [
+            0.25,
+            0.5,
+            0
+          ],
+          "bx": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "op": "INTERSECTION",
+          "expected": 0.0625,
+          "actual": 0.058159722222222196,
+          "base": 0.05815972222222224
+        },
+        {
+          "cdt": true,
+          "segments": 2,
+          "pos": [
+            0.25,
+            0.5,
+            0
+          ],
+          "bx": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "op": "ADDITION",
+          "expected": 1.0625,
+          "actual": 1.0555555555555562,
+          "base": 1.0729166666666659
+        }
+      ],
+      "headFailures": 4,
+      "baseFailures": 4,
+      "controlFailures": 4,
+      "regressionCount": 0,
+      "byMode": {
+        "legacy": 0,
+        "cdt": 0
+      }
+    }
+  },
+  "integrity": {
+    "fullRuns": 12,
+    "candidateEvaluations": 331174,
+    "fullReportAndEvidenceIntegrity": true,
+    "parquetHashesUnchanged": 75,
+    "cachedLibrarySourcesEqualGitCommits": true,
+    "cachedConsumerMatchesFrozenSource": true,
+    "restoredSourceFilesEqualPreviousRuntime": 1992,
+    "originalFilesVerified": 2890,
+    "archivesVerified": 13,
+    "deterministicCDTBuild": true,
+    "sumBaseSeconds": 382.651,
+    "sumCandidateSeconds": 241.368,
+    "wallReductionPercent": 36.922156220681515
+  },
+  "historicalChecks": {
+    "passed": 9,
+    "knownAnalyticalFailures": 4,
+    "newAnalyticalFailures": 0,
+    "verticalRemovedUniquePositiveRows": 44,
+    "verticalPreservedUniqueDuplicateRows": 178
+  },
+  "fullComparison": {
+    "baselineIncludesMirrorAndAffineFixes": true,
+    "performanceChanges": [
+      "projection vector pool",
+      "adaptive robust incircle",
+      "conservative distance bounds"
+    ],
+    "fullRuns": 12,
+    "uniqueCandidatePairs": 165587,
+    "candidateEvaluations": 331174,
+    "allPassed": true,
+    "timingRounds": 1,
+    "sumBaseSeconds": 382.651,
+    "sumCandidateSeconds": 241.368,
+    "aggregateWallReductionPercent": 36.922156220681515,
+    "runs": [
+      {
+        "project": "sgd-duplex",
+        "base": "30f0aa6c8d0f9edd15c4b217957012d2de48e3eb",
+        "candidate": "5bd07d41a73f74f56855a81ab2bdc86e3dd8a14d",
+        "candidates": 60,
+        "rows": 10,
+        "csvBytesEqual": true,
+        "coverageEqualExceptUris": true,
+        "errors": 0,
+        "baseSeconds": 2.191,
+        "candidateSeconds": 2.018,
+        "csvSha256": "47afb62728057cccf14fb91d22fb307b90fb95ec66fd8400a81ad627f28af9cc"
+      },
+      {
+        "project": "digital-hub",
+        "base": "30f0aa6c8d0f9edd15c4b217957012d2de48e3eb",
+        "candidate": "5bd07d41a73f74f56855a81ab2bdc86e3dd8a14d",
+        "candidates": 9321,
+        "rows": 2665,
+        "csvBytesEqual": true,
+        "coverageEqualExceptUris": true,
+        "errors": 0,
+        "baseSeconds": 21.534,
+        "candidateSeconds": 9.843,
+        "csvSha256": "1481b6b9b30d00f71d6b410742361c9de2568958d1d3557598ef8e8f6cf66f0a"
+      },
+      {
+        "project": "wbdg-office",
+        "base": "30f0aa6c8d0f9edd15c4b217957012d2de48e3eb",
+        "candidate": "5bd07d41a73f74f56855a81ab2bdc86e3dd8a14d",
+        "candidates": 7761,
+        "rows": 2692,
+        "csvBytesEqual": true,
+        "coverageEqualExceptUris": true,
+        "errors": 0,
+        "baseSeconds": 17.338,
+        "candidateSeconds": 9.937,
+        "csvSha256": "e4845601d0458951e01e40493066d455df8bf8c07d21b57ebe96d751bb13c18b"
+      },
+      {
+        "project": "byh-donauworth",
+        "base": "30f0aa6c8d0f9edd15c4b217957012d2de48e3eb",
+        "candidate": "5bd07d41a73f74f56855a81ab2bdc86e3dd8a14d",
+        "candidates": 6198,
+        "rows": 1409,
+        "csvBytesEqual": true,
+        "coverageEqualExceptUris": true,
+        "errors": 0,
+        "baseSeconds": 19.459,
+        "candidateSeconds": 9.562,
+        "csvSha256": "306e810973abc49da7ea7b26d5ac792b5b58aa00358e84143c67b5cf79303cd6"
+      },
+      {
+        "project": "dmsw-v28",
+        "base": "30f0aa6c8d0f9edd15c4b217957012d2de48e3eb",
+        "candidate": "5bd07d41a73f74f56855a81ab2bdc86e3dd8a14d",
+        "candidates": 94436,
+        "rows": 18043,
+        "csvBytesEqual": true,
+        "coverageEqualExceptUris": true,
+        "errors": 0,
+        "baseSeconds": 137.781,
+        "candidateSeconds": 86.382,
+        "csvSha256": "fecbcd4515cff32962c4fa9af63a098b624283d687fd2e1771049906d3dd2f9c"
+      },
+      {
+        "project": "bvg-v1",
+        "base": "30f0aa6c8d0f9edd15c4b217957012d2de48e3eb",
+        "candidate": "5bd07d41a73f74f56855a81ab2bdc86e3dd8a14d",
+        "candidates": 47811,
+        "rows": 17725,
+        "csvBytesEqual": true,
+        "coverageEqualExceptUris": true,
+        "errors": 0,
+        "baseSeconds": 184.348,
+        "candidateSeconds": 123.626,
+        "csvSha256": "a196abd6a2ee2697199bacce16972d8808791e1398a4500830cc48976b7b8e53"
+      }
+    ]
+  },
+  "evidenceArchive": {
+    "path": "archives/commit-validation.tar.gz",
+    "sizeBytes": 10614344,
+    "sha256": "31e4b491164281a5b300085681fbed351664227abc5c98b7711c645cbfb1d320",
+    "files": [
+      {
+        "path": "checks/current-box-sweep.json",
+        "sizeBytes": 1366,
+        "sha256": "90c1dc70aed485e8cad61732f54fe759f1319004f08a8ab9f1c442e2bcc7e901"
+      },
+      {
+        "path": "checks/current-box-sweep.mjs",
+        "sizeBytes": 2511,
+        "sha256": "8d5b4879f5ebc468e68954561eabeeeabdeb2fea4f3b999e35e26bd03424bc86"
+      },
+      {
+        "path": "checks/current-build-smoke.json",
+        "sizeBytes": 840,
+        "sha256": "4ef7d1c4224ebc53dd5bf64553663db821d51966852fedad222abcb917ccde05"
+      },
+      {
+        "path": "checks/current-build.log",
+        "sizeBytes": 514,
+        "sha256": "bcb1fa7dc5d68dfef5f2c893f0638d004749adb476efcb8c098899f94d12fe62"
+      },
+      {
+        "path": "checks/current-historical-check.log",
+        "sizeBytes": 2877,
+        "sha256": "1b32b44fbd5fa366fd74055bd0f32b89f34187f665897480755568af30146518"
+      },
+      {
+        "path": "checks/current-integrity.json",
+        "sizeBytes": 473,
+        "sha256": "8a33a97dcd33ce18dc2e222f22de3994f1ccedd29857dcb3b0e204f2b9b1a093"
+      },
+      {
+        "path": "checks/current-lint.log",
+        "sizeBytes": 1498,
+        "sha256": "b9700cf7d2aaafe658fea7678087d402514d865bdbe612a812814ede1eaea074"
+      },
+      {
+        "path": "checks/current-npm-pack.json",
+        "sizeBytes": 5254,
+        "sha256": "55850aad4c12a1a46efb5e516a97a35c711165d42f03f3864cf72f6d426b2cac"
+      },
+      {
+        "path": "checks/current-tests.log",
+        "sizeBytes": 1207,
+        "sha256": "110f9e957a437a1b710da962f81f4dc76e13a501f640c12d94b0dd97f8e48b62"
+      },
+      {
+        "path": "checks/pool-after.json",
+        "sizeBytes": 583,
+        "sha256": "4c53cfe973c7e0e48a5bee18b38a13d28e9b98a120de66d23b8878719cf2a749"
+      },
+      {
+        "path": "checks/pool-before.json",
+        "sizeBytes": 599,
+        "sha256": "c5e02760a2993542d86d85a622886116d60b453724e41c7510a8c297307da2f8"
+      },
+      {
+        "path": "checks/pool-current.mjs",
+        "sizeBytes": 2487,
+        "sha256": "bc4852b40e753883808cbfc6d5d8762bc20b1c331b61fcc997df68c29bcd6486"
+      },
+      {
+        "path": "commit-bench/bvg-v1/handoff-base.coverage.intentional-exclusions.000000.sha256",
+        "sizeBytes": 1397825,
+        "sha256": "0aba59d72c19460a70b12c6dad885b8efa427292ac9f014dc21e523f842a83dd"
+      },
+      {
+        "path": "commit-bench/bvg-v1/handoff-base.coverage.json",
+        "sizeBytes": 4495914,
+        "sha256": "b6d37ccf785dbcb07879a93f7394c6997884758a35a87d20bb91cc11a39a61c2"
+      },
+      {
+        "path": "commit-bench/bvg-v1/handoff-base.csv",
+        "sizeBytes": 4839855,
+        "sha256": "a196abd6a2ee2697199bacce16972d8808791e1398a4500830cc48976b7b8e53"
+      },
+      {
+        "path": "commit-bench/bvg-v1/handoff-base.progress.json",
+        "sizeBytes": 318,
+        "sha256": "efbb332bb51474ee96a73d97f27ddbcc45e8786656d07d8797a54e084a2362bd"
+      },
+      {
+        "path": "commit-bench/bvg-v1/handoff-base.result.json",
+        "sizeBytes": 2517812,
+        "sha256": "2135b7399078a382f1a42d17c981b02bf067326388426d5fb457bc86036c7624"
+      },
+      {
+        "path": "commit-bench/bvg-v1/handoff-candidate.coverage.intentional-exclusions.000000.sha256",
+        "sizeBytes": 1397825,
+        "sha256": "0aba59d72c19460a70b12c6dad885b8efa427292ac9f014dc21e523f842a83dd"
+      },
+      {
+        "path": "commit-bench/bvg-v1/handoff-candidate.coverage.json",
+        "sizeBytes": 4495919,
+        "sha256": "99359a0cb5c4b6d52b55d14e541b8b7e0e4bfe32ff6f5f6d95c6dc2f6acf23ce"
+      },
+      {
+        "path": "commit-bench/bvg-v1/handoff-candidate.csv",
+        "sizeBytes": 4839855,
+        "sha256": "a196abd6a2ee2697199bacce16972d8808791e1398a4500830cc48976b7b8e53"
+      },
+      {
+        "path": "commit-bench/bvg-v1/handoff-candidate.progress.json",
+        "sizeBytes": 323,
+        "sha256": "f4b1470d564f330b9cdb94cb148d2477e0b3110fbd80f405c0f4c0fab045ceca"
+      },
+      {
+        "path": "commit-bench/bvg-v1/handoff-candidate.result.json",
+        "sizeBytes": 2517082,
+        "sha256": "b2708a462c1dfa8c42eaf6bfef6299090feb8ef828f7d61f545c32aca0958ce2"
+      },
+      {
+        "path": "commit-bench/byh-donauworth/handoff-base.coverage.intentional-exclusions.000000.sha256",
+        "sizeBytes": 105560,
+        "sha256": "cee7b6569c0a0ba4cd0e9f7a47d60c747b41afad1fa4333328acf91228f11cbd"
+      },
+      {
+        "path": "commit-bench/byh-donauworth/handoff-base.coverage.json",
+        "sizeBytes": 1127132,
+        "sha256": "4da7ef395d1be71ded22586217b3f75c14f4da4bf14049cb89b5867c0019fb52"
+      },
+      {
+        "path": "commit-bench/byh-donauworth/handoff-base.csv",
+        "sizeBytes": 485443,
+        "sha256": "306e810973abc49da7ea7b26d5ac792b5b58aa00358e84143c67b5cf79303cd6"
+      },
+      {
+        "path": "commit-bench/byh-donauworth/handoff-base.progress.json",
+        "sizeBytes": 320,
+        "sha256": "8d7cf19832b576ec9cf13ec8be23f7e768853dd6b008797ce1e856e57a6710f3"
+      },
+      {
+        "path": "commit-bench/byh-donauworth/handoff-base.result.json",
+        "sizeBytes": 1343216,
+        "sha256": "16dc7c2bbc54dabce000f5c2f0b6ca0b5a899a0deddad95d01b4b5aac4b41eaf"
+      },
+      {
+        "path": "commit-bench/byh-donauworth/handoff-candidate.coverage.intentional-exclusions.000000.sha256",
+        "sizeBytes": 105560,
+        "sha256": "cee7b6569c0a0ba4cd0e9f7a47d60c747b41afad1fa4333328acf91228f11cbd"
+      },
+      {
+        "path": "commit-bench/byh-donauworth/handoff-candidate.coverage.json",
+        "sizeBytes": 1127137,
+        "sha256": "8de0992db3eb220fddbcc3fa0c422396abd07f1ee8afc574fe240245d48a923c"
+      },
+      {
+        "path": "commit-bench/byh-donauworth/handoff-candidate.csv",
+        "sizeBytes": 485443,
+        "sha256": "306e810973abc49da7ea7b26d5ac792b5b58aa00358e84143c67b5cf79303cd6"
+      },
+      {
+        "path": "commit-bench/byh-donauworth/handoff-candidate.progress.json",
+        "sizeBytes": 324,
+        "sha256": "21902e06fd44a30dc38ad3f10757446c251be46320ea2f318b9f13faf1ba0a53"
+      },
+      {
+        "path": "commit-bench/byh-donauworth/handoff-candidate.result.json",
+        "sizeBytes": 1343101,
+        "sha256": "eef2a010886cc893c66cf79400c99f72b763a31a9bdb0efce4422693d75910be"
+      },
+      {
+        "path": "commit-bench/digital-hub/handoff-base.coverage.intentional-exclusions.000000.sha256",
+        "sizeBytes": 247520,
+        "sha256": "ee89bd70d8907e0ce359419ff067667ea20d817d18295a3a738c1ee123dcbb87"
+      },
+      {
+        "path": "commit-bench/digital-hub/handoff-base.coverage.json",
+        "sizeBytes": 932667,
+        "sha256": "d9f9fcdad7913c0cd9c07569696e6fec514adc5e1c9ce3d4b71c5329c32add67"
+      },
+      {
+        "path": "commit-bench/digital-hub/handoff-base.csv",
+        "sizeBytes": 870777,
+        "sha256": "1481b6b9b30d00f71d6b410742361c9de2568958d1d3557598ef8e8f6cf66f0a"
+      },
+      {
+        "path": "commit-bench/digital-hub/handoff-base.progress.json",
+        "sizeBytes": 317,
+        "sha256": "4e809d096671904d8c394d93595f7ed4ee2e72df57817999a1dbf53405d65be9"
+      },
+      {
+        "path": "commit-bench/digital-hub/handoff-base.result.json",
+        "sizeBytes": 1321424,
+        "sha256": "10cb9db7f6a0fcbdb8f6ca95085958ca82f3da0fa130b542f09e9ef583132f0e"
+      },
+      {
+        "path": "commit-bench/digital-hub/handoff-candidate.coverage.intentional-exclusions.000000.sha256",
+        "sizeBytes": 247520,
+        "sha256": "ee89bd70d8907e0ce359419ff067667ea20d817d18295a3a738c1ee123dcbb87"
+      },
+      {
+        "path": "commit-bench/digital-hub/handoff-candidate.coverage.json",
+        "sizeBytes": 932672,
+        "sha256": "5fd06f4d43d77f3ef95976c5721159b6ad53eac372711401fa85823a6db8eb0d"
+      },
+      {
+        "path": "commit-bench/digital-hub/handoff-candidate.csv",
+        "sizeBytes": 870777,
+        "sha256": "1481b6b9b30d00f71d6b410742361c9de2568958d1d3557598ef8e8f6cf66f0a"
+      },
+      {
+        "path": "commit-bench/digital-hub/handoff-candidate.progress.json",
+        "sizeBytes": 321,
+        "sha256": "747e3d78640fd606c2da0cd4168addd4f986a925097fef15058a910591bda501"
+      },
+      {
+        "path": "commit-bench/digital-hub/handoff-candidate.result.json",
+        "sizeBytes": 1321301,
+        "sha256": "a8bcbe51159a1b3ae29a117f701d87b513a74d41097b3688858f26b38632a65d"
+      },
+      {
+        "path": "commit-bench/dmsw-v28/handoff-base.coverage.intentional-exclusions.000000.sha256",
+        "sizeBytes": 2418520,
+        "sha256": "4ecc2fb9ef3ec6e352f6c138d35efe1d587ab91fdbf4d5d82a9cebfdc05ba71d"
+      },
+      {
+        "path": "commit-bench/dmsw-v28/handoff-base.coverage.json",
+        "sizeBytes": 13956539,
+        "sha256": "4094cd530ebbe3a7c65248d6e6617baab46ee6909967ac1c5bd5ca07f758647b"
+      },
+      {
+        "path": "commit-bench/dmsw-v28/handoff-base.csv",
+        "sizeBytes": 5089092,
+        "sha256": "fecbcd4515cff32962c4fa9af63a098b624283d687fd2e1771049906d3dd2f9c"
+      },
+      {
+        "path": "commit-bench/dmsw-v28/handoff-base.progress.json",
+        "sizeBytes": 321,
+        "sha256": "afcd3094f48a39ab24e222175e4c0b0a12f4590678be325f9ba0b5478cd96295"
+      },
+      {
+        "path": "commit-bench/dmsw-v28/handoff-base.result.json",
+        "sizeBytes": 4237578,
+        "sha256": "d54510cdc4b6f95fd7d06d137439c6f0847cf6561dbd2b41c94a1f653fecd16c"
+      },
+      {
+        "path": "commit-bench/dmsw-v28/handoff-candidate.coverage.intentional-exclusions.000000.sha256",
+        "sizeBytes": 2418520,
+        "sha256": "4ecc2fb9ef3ec6e352f6c138d35efe1d587ab91fdbf4d5d82a9cebfdc05ba71d"
+      },
+      {
+        "path": "commit-bench/dmsw-v28/handoff-candidate.coverage.json",
+        "sizeBytes": 13956544,
+        "sha256": "6939dfd35a2b2c5194b91e244aa66dc0eaf9efff032a90dbd6002720b31def3e"
+      },
+      {
+        "path": "commit-bench/dmsw-v28/handoff-candidate.csv",
+        "sizeBytes": 5089092,
+        "sha256": "fecbcd4515cff32962c4fa9af63a098b624283d687fd2e1771049906d3dd2f9c"
+      },
+      {
+        "path": "commit-bench/dmsw-v28/handoff-candidate.progress.json",
+        "sizeBytes": 325,
+        "sha256": "44cf54940c8bf46ad8cc29b8d5e240580af3ac91c15c348ebc3f794785aba194"
+      },
+      {
+        "path": "commit-bench/dmsw-v28/handoff-candidate.result.json",
+        "sizeBytes": 4236106,
+        "sha256": "74e69254dc5a36b50aca83c09c7f2d8550d2f8faacfe312f260ec06d442d7f44"
+      },
+      {
+        "path": "commit-bench/sgd-duplex/handoff-base.coverage.intentional-exclusions.000000.sha256",
+        "sizeBytes": 31070,
+        "sha256": "ea7a509e98883c8ae069510fc4a4a08af20332fa0243890316ee2588e139b44a"
+      },
+      {
+        "path": "commit-bench/sgd-duplex/handoff-base.coverage.json",
+        "sizeBytes": 88476,
+        "sha256": "40302fd48976a0b825d169644e79f478b5169c8eea400044814103fa0e32b376"
+      },
+      {
+        "path": "commit-bench/sgd-duplex/handoff-base.csv",
+        "sizeBytes": 3745,
+        "sha256": "47afb62728057cccf14fb91d22fb307b90fb95ec66fd8400a81ad627f28af9cc"
+      },
+      {
+        "path": "commit-bench/sgd-duplex/handoff-base.progress.json",
+        "sizeBytes": 307,
+        "sha256": "6508180abe332582fcd757e1598d31960e3e2be170ac9b85d3f99cbe25f202fc"
+      },
+      {
+        "path": "commit-bench/sgd-duplex/handoff-base.result.json",
+        "sizeBytes": 51510,
+        "sha256": "f82c0d3e6a7962a83e49ffeb9d68fa1f3dd038145818092bcd0d272f521bd41f"
+      },
+      {
+        "path": "commit-bench/sgd-duplex/handoff-candidate.coverage.intentional-exclusions.000000.sha256",
+        "sizeBytes": 31070,
+        "sha256": "ea7a509e98883c8ae069510fc4a4a08af20332fa0243890316ee2588e139b44a"
+      },
+      {
+        "path": "commit-bench/sgd-duplex/handoff-candidate.coverage.json",
+        "sizeBytes": 88481,
+        "sha256": "957e5e025204282fc60b2018988a87f247479cfacb6cec4205d66f69aaba1d3f"
+      },
+      {
+        "path": "commit-bench/sgd-duplex/handoff-candidate.csv",
+        "sizeBytes": 3745,
+        "sha256": "47afb62728057cccf14fb91d22fb307b90fb95ec66fd8400a81ad627f28af9cc"
+      },
+      {
+        "path": "commit-bench/sgd-duplex/handoff-candidate.progress.json",
+        "sizeBytes": 310,
+        "sha256": "68332847f66647707627ff41678b96dcdf056af5a99b2211aaa7a85bfa5e7f42"
+      },
+      {
+        "path": "commit-bench/sgd-duplex/handoff-candidate.result.json",
+        "sizeBytes": 51529,
+        "sha256": "65435f4399b8fc824c2a6f7c8903cebb7546e3a76b9091734bd8a1d2373bde03"
+      },
+      {
+        "path": "commit-bench/wbdg-office/handoff-base.coverage.intentional-exclusions.000000.sha256",
+        "sizeBytes": 42510,
+        "sha256": "2345aa0ba3306907b4a1a19b3191caeb253c37d97c21e957702e7c213466fa8b"
+      },
+      {
+        "path": "commit-bench/wbdg-office/handoff-base.coverage.json",
+        "sizeBytes": 961745,
+        "sha256": "a539d49ee0187d4ce75aeb485ed57aaf4fb8dfcc06a90839fd7d2a97c4b0aeac"
+      },
+      {
+        "path": "commit-bench/wbdg-office/handoff-base.csv",
+        "sizeBytes": 863108,
+        "sha256": "e4845601d0458951e01e40493066d455df8bf8c07d21b57ebe96d751bb13c18b"
+      },
+      {
+        "path": "commit-bench/wbdg-office/handoff-base.progress.json",
+        "sizeBytes": 317,
+        "sha256": "5aa413d79d9c051a759d7bd3d8de27e9e72d9d457dadb7576bc0f6889a2f4379"
+      },
+      {
+        "path": "commit-bench/wbdg-office/handoff-base.result.json",
+        "sizeBytes": 446061,
+        "sha256": "1a3631acc3b02e813a823bf67568c941d54f8adf08b07ad623eb97f6cfd325a4"
+      },
+      {
+        "path": "commit-bench/wbdg-office/handoff-candidate.coverage.intentional-exclusions.000000.sha256",
+        "sizeBytes": 42510,
+        "sha256": "2345aa0ba3306907b4a1a19b3191caeb253c37d97c21e957702e7c213466fa8b"
+      },
+      {
+        "path": "commit-bench/wbdg-office/handoff-candidate.coverage.json",
+        "sizeBytes": 961750,
+        "sha256": "0680386c5df44d279d1b845abc32f80c21a230eccb4c9b92415f0c0ff078d499"
+      },
+      {
+        "path": "commit-bench/wbdg-office/handoff-candidate.csv",
+        "sizeBytes": 863108,
+        "sha256": "e4845601d0458951e01e40493066d455df8bf8c07d21b57ebe96d751bb13c18b"
+      },
+      {
+        "path": "commit-bench/wbdg-office/handoff-candidate.progress.json",
+        "sizeBytes": 321,
+        "sha256": "9dc09c3134925095255590feba2cb630db7688722d22e2057619f59990d48870"
+      },
+      {
+        "path": "commit-bench/wbdg-office/handoff-candidate.result.json",
+        "sizeBytes": 446004,
+        "sha256": "790b501ccef22c94072a6cfdc204de2dad68c69f4bd17b48407c1ea6cbef2620"
+      },
+      {
+        "path": "commit-comparison-handoff.json",
+        "sizeBytes": 2527,
+        "sha256": "7695c4a376c22dd24a5ab198056240796050835c9ce059d306400699d431f6b9"
+      },
+      {
+        "path": "handoff-dependencies.json",
+        "sizeBytes": 131,
+        "sha256": "3d28e17036229c839ef602017b297757b0a6075effb828d04a7e2b38a6972442"
+      },
+      {
+        "path": "handoff-logs/commit-bvg-v1-handoff-base.log",
+        "sizeBytes": 24494,
+        "sha256": "e23e650f6840357c123b0df0ab05314f04c6809f3c68f0a3be6e35afdfa721ca"
+      },
+      {
+        "path": "handoff-logs/commit-bvg-v1-handoff-candidate.log",
+        "sizeBytes": 16753,
+        "sha256": "a58eab3af6fbc3934bedc651b2dfd6f43f3220f07d58e0d649f3ead82cdfd291"
+      },
+      {
+        "path": "handoff-logs/commit-byh-donauworth-handoff-base.log",
+        "sizeBytes": 2802,
+        "sha256": "56c0d8cb5df95db9334ab1f61fac46bbcc2d4b24062f27a92cd8efc783f011d6"
+      },
+      {
+        "path": "handoff-logs/commit-byh-donauworth-handoff-candidate.log",
+        "sizeBytes": 1692,
+        "sha256": "ff43b4a7d93ce70265482ed2371de37726d43218d6719c0c1acc32a1c74d6679"
+      },
+      {
+        "path": "handoff-logs/commit-digital-hub-handoff-base.log",
+        "sizeBytes": 2755,
+        "sha256": "19322b9919626aa6745f0a5e5d4a6fc9e513a7e4eba2d36e15cbc93729d379b6"
+      },
+      {
+        "path": "handoff-logs/commit-digital-hub-handoff-candidate.log",
+        "sizeBytes": 1674,
+        "sha256": "1a7d50766a5b604d0c0165aab1edeef6dd61f650ffb4d42efed550d80ac9e888"
+      },
+      {
+        "path": "handoff-logs/commit-dmsw-v28-handoff-base.log",
+        "sizeBytes": 17263,
+        "sha256": "db3efa7d17d7fb0709db2fd5670e5f5274b0a16691f63216294391e5ce9615d1"
+      },
+      {
+        "path": "handoff-logs/commit-dmsw-v28-handoff-candidate.log",
+        "sizeBytes": 10457,
+        "sha256": "87fa71374e1f052cae7c6d7eeabf052d19964a1a244eb78de221a5e48776bfc7"
+      },
+      {
+        "path": "handoff-logs/commit-sgd-duplex-handoff-base.log",
+        "sizeBytes": 1619,
+        "sha256": "5920b53d22200f5d8e038567ba9635e58509ce203928dd430dc8b86277943fe8"
+      },
+      {
+        "path": "handoff-logs/commit-sgd-duplex-handoff-candidate.log",
+        "sizeBytes": 1647,
+        "sha256": "a6896e2eedda64fdd9abb378ce5d2e180b525f465afab36c24f9129b75fa1750"
+      },
+      {
+        "path": "handoff-logs/commit-wbdg-office-handoff-base.log",
+        "sizeBytes": 2737,
+        "sha256": "1f4a173662b8cc3a62a7e6b5ddc07a150aa1071d6c45d12691d4afd3525ef833"
+      },
+      {
+        "path": "handoff-logs/commit-wbdg-office-handoff-candidate.log",
+        "sizeBytes": 1674,
+        "sha256": "26d9f6ada9ae14264ca550af94ec5589b9bd05d46f07f4df1893fb6fada10fbf"
+      },
+      {
+        "path": "handoff-logs/distance-boundaries.log",
+        "sizeBytes": 778,
+        "sha256": "be5d112920b3d5b157c3b43000467ba42ec1ef1494bcaae09c35bf08b1578e64"
+      },
+      {
+        "path": "handoff-logs/input-z.log",
+        "sizeBytes": 590,
+        "sha256": "b105d435c9d0ab7f04ae52d250279c530a5702f743f044f996a7dbd1d9213d80"
+      },
+      {
+        "path": "handoff-logs/latest-box-sweep.log",
+        "sizeBytes": 1366,
+        "sha256": "90c1dc70aed485e8cad61732f54fe759f1319004f08a8ab9f1c442e2bcc7e901"
+      },
+      {
+        "path": "handoff-logs/latest-library.log",
+        "sizeBytes": 907,
+        "sha256": "68886f802d482db6817631157277a1e3b737d3a7c84212d161140d49134aa00d"
+      },
+      {
+        "path": "handoff-logs/policy.log",
+        "sizeBytes": 4236,
+        "sha256": "4df5c9804dfe54c7890f6599b6d6b946e2cb5e9b840b4e509a675c395ebacd1e"
+      },
+      {
+        "path": "handoff-logs/predicate-signs.log",
+        "sizeBytes": 122,
+        "sha256": "c68305666e2755ee929d5a56f0439da84038302b9b5262f56dfb7936827e42e5"
+      },
+      {
+        "path": "handoff-logs/stored-vertical.log",
+        "sizeBytes": 1826,
+        "sha256": "e461f6dd4dcb64304d013bc077a1aa80003c2483860264587c168116e078bbc3"
+      },
+      {
+        "path": "handoff-logs/stored-wave-one.log",
+        "sizeBytes": 4483,
+        "sha256": "0a64c0178887dd71f30ad04a6934cb019e6a502b94be8d71591f4c5273e53432"
+      },
+      {
+        "path": "handoff-logs/stored-wave-two.log",
+        "sizeBytes": 7686,
+        "sha256": "5658e950d4fefb7a82e991c23123923e969d1e15beb98c7f4a4494f64caf63ed"
+      },
+      {
+        "path": "harness/benchmark.js",
+        "sizeBytes": 4089,
+        "sha256": "0aa8eed21fee0353bf8757219f37f8b3c1a873c95e6775b284a9f18daeaa1d84"
+      },
+      {
+        "path": "harness/handoff.py",
+        "sizeBytes": 26445,
+        "sha256": "7d2f38ddc0ce6b8dc6e979256707b91fa029c470b3d6c56504ca2b3f9a6c3a82"
+      }
+    ]
+  },
+  "limits": [
+    "A matching sampled or full-project report is not a proof of correctness for every geometry.",
+    "Four existing analytical CDT failures remain with the same cases and values as the corrected historical head.",
+    "Result brushes use matrixAutoUpdate=false to retain full affine matrices. Consumer integration must account for this documented API behavior.",
+    "Vertical early exit remains a consumer-side prototype patch; it was not applied to the current library or current full comparison.",
+    "Historical validation.json predates these source commits and the compact archive layout; its hashes and counts describe that earlier package.",
+    "Current evidence retains its original absolute runtime URIs. Use archive-relative paths from evidenceArchive.files to inspect archived bytes.",
+    "No Cloud Run or browser validation, npm publication, consumer dependency upgrade or push."
+  ],
+  "handoffChecks": {
+    "invalidRunNamesRejected": 3,
+    "existingComparisonNotOverwritten": true,
+    "corruptCsvRejected": true,
+    "entryPointLinksValid": true,
+    "allManifestStorageIncludedInGitIndex": true,
+    "authoredWhitespaceClean": true,
+    "historicalFilesWithPreservedWhitespaceWarnings": 12,
+    "currentEvidenceFilesVerified": 97
+  }
+}

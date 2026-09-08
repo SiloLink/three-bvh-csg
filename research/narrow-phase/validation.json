@@ -1,0 +1,448 @@
+{
+  "date": "2026-09-08",
+  "branchBase": "8a53705c9613e2e15d753e5de0e0dc02e799a2d9",
+  "bundleManifestSha256": "9aa26620e8ca3ac3c08e913ece08983b1cb32167c7e3d48aba3d14e48fb2ae19",
+  "handoffScriptSha256": "ddad76a260e01cedbcf157369013220b84d01c5321ac3c957969e68f143697f2",
+  "method": "Export staged repository files with git checkout-index into an independent directory; prepare a fresh runtime entirely from the bundle; install the bundled lockfiles; run checks and sequential full replays. Same macOS host, separate dependency installation.",
+  "environment": {
+    "platform": "Darwin",
+    "node": "v24.16.0",
+    "three": "0.179.1",
+    "three-mesh-bvh": "0.9.11",
+    "vitest": "4.0.18",
+    "robust-predicates": "3.0.3"
+  },
+  "integrity": {
+    "originalFiles": 2890,
+    "parquetFiles": 75,
+    "archives": 12,
+    "allOriginalFileHashesVerified": true,
+    "allManifestStorageIncludedInIndex": true,
+    "dependencyRootsContainedInPreparedRuntime": 19
+  },
+  "repositoryChecks": {
+    "testsPassed": 70,
+    "testsTodo": 1,
+    "testsFailed": 0,
+    "eslintErrors": 0,
+    "eslintWarnings": 11,
+    "typescriptPassed": true,
+    "npmDryRunContainsResearch": false
+  },
+  "checks": {
+    "inputWorldZ": {
+      "seed": "0x7f914a3b",
+      "oracle": "Exact BigInt dyadic arithmetic, independent of floating interval implementation",
+      "pointCases": 40010,
+      "pointCertified": 27243,
+      "pointUncertified": 12767,
+      "roundedTransformChecks": 27243,
+      "meshCases": 3000,
+      "meshCertified": 2968,
+      "interiorChecks": 2968,
+      "boxCertified": 2968,
+      "boxVertexChecks": 20842,
+      "heightCases": 30000,
+      "heightCertified": 29997,
+      "heightUncertified": 3,
+      "mismatches": 0,
+      "elapsedMs": 147.236042,
+      "scope": "Static input affine world-Z and interval-height only; CSG-generated output is not certified"
+    },
+    "distanceBounds": {
+      "segmentComparisons": 1000000,
+      "pointComparisons": 1000000,
+      "falseRejects": []
+    },
+    "incircle": {
+      "count": 100000,
+      "zero": 50000,
+      "mismatch": 0,
+      "timing": {
+        "exact": 205.19879200000003,
+        "adaptive": 30.00950000000006
+      },
+      "sink": -360
+    },
+    "policy": {
+      "cases": [
+        {
+          "name": "single-thin-overlap",
+          "passed": true
+        },
+        {
+          "name": "above-vertical-limit",
+          "passed": true
+        },
+        {
+          "name": "small-duplicate-exemption",
+          "passed": true
+        },
+        {
+          "name": "separated-thin-overlaps-union-is-tall",
+          "passed": true
+        },
+        {
+          "name": "separated-z-intervals",
+          "passed": true
+        }
+      ],
+      "duplicateFalseExclusions": 0
+    },
+    "analyticalSweep": {
+      "scenarios": 360,
+      "operationsPerScenario": 5,
+      "knownHeadFailures": 4,
+      "knownOldMainFailures": 4,
+      "newFailingCases": 0,
+      "remainingFailures": [
+        {
+          "cdt": true,
+          "segments": 2,
+          "pos": [
+            0.25,
+            0,
+            0
+          ],
+          "bx": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "op": "INTERSECTION",
+          "expected": 0.125,
+          "actual": 0.14583333333333331,
+          "base": 0.14583333333333326
+        },
+        {
+          "cdt": true,
+          "segments": 2,
+          "pos": [
+            0.25,
+            0,
+            0
+          ],
+          "bx": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "op": "ADDITION",
+          "expected": 1,
+          "actual": 1.0208333333333333,
+          "base": 0.9583333333333333
+        },
+        {
+          "cdt": true,
+          "segments": 2,
+          "pos": [
+            0.25,
+            0.5,
+            0
+          ],
+          "bx": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "op": "INTERSECTION",
+          "expected": 0.0625,
+          "actual": 0.058159722222222196,
+          "base": 0.05815972222222224
+        },
+        {
+          "cdt": true,
+          "segments": 2,
+          "pos": [
+            0.25,
+            0.5,
+            0
+          ],
+          "bx": [
+            0.5,
+            0.5,
+            0.5
+          ],
+          "op": "ADDITION",
+          "expected": 1.0625,
+          "actual": 1.0555555555555562,
+          "base": 1.0729166666666659
+        }
+      ]
+    },
+    "historicalComparisons": {
+      "firstTwoWavesOutputParity": true,
+      "verticalExpectedRemovedUniquePositiveRows": 44,
+      "verticalPreservedUniqueDuplicateRows": 178
+    },
+    "runNameAndNonOverwriteChecks": 4,
+    "prototypePatches": [
+      {
+        "variant": "pool",
+        "parent": "baseline",
+        "files": 1,
+        "exactMatch": true
+      },
+      {
+        "variant": "adaptive",
+        "parent": "baseline",
+        "files": 4,
+        "exactMatch": true
+      },
+      {
+        "variant": "adaptive-only",
+        "parent": "pool",
+        "files": 1,
+        "exactMatch": true
+      },
+      {
+        "variant": "combined",
+        "parent": "baseline",
+        "files": 3,
+        "exactMatch": true
+      },
+      {
+        "variant": "position",
+        "parent": "baseline",
+        "files": 2,
+        "exactMatch": true
+      },
+      {
+        "variant": "no-delaunay",
+        "parent": "baseline",
+        "files": 3,
+        "exactMatch": true
+      },
+      {
+        "variant": "coplanar",
+        "parent": "baseline",
+        "files": 2,
+        "exactMatch": true
+      },
+      {
+        "variant": "ray-side",
+        "parent": "adaptive-only",
+        "files": 2,
+        "exactMatch": true
+      },
+      {
+        "variant": "edge-bounds",
+        "parent": "adaptive-only",
+        "files": 2,
+        "exactMatch": true
+      },
+      {
+        "variant": "generic-combined",
+        "parent": "edge-bounds",
+        "files": 2,
+        "exactMatch": true
+      },
+      {
+        "variant": "vertical-control",
+        "parent": "edge-bounds",
+        "files": 2,
+        "exactMatch": true
+      },
+      {
+        "variant": "vertical-shadow",
+        "parent": "vertical-control",
+        "files": 1,
+        "exactMatch": true
+      },
+      {
+        "variant": "vertical-skip",
+        "parent": "vertical-control",
+        "files": 1,
+        "exactMatch": true
+      }
+    ]
+  },
+  "fullReplay": {
+    "fullRuns": 12,
+    "candidateEvaluations": 331174,
+    "allPassed": true,
+    "runs": [
+      {
+        "project": "sgd-duplex",
+        "phase": "general-optimizations",
+        "variant": "edge-bounds",
+        "candidates": 60,
+        "rows": 10,
+        "csvSha256": "47afb62728057cccf14fb91d22fb307b90fb95ec66fd8400a81ad627f28af9cc",
+        "csvBytesEqualToFrozenRun": true,
+        "coverageEqualExceptUris": true,
+        "errors": 0,
+        "seconds": 1.941
+      },
+      {
+        "project": "sgd-duplex",
+        "phase": "vertical-bound",
+        "variant": "vertical-skip",
+        "candidates": 60,
+        "rows": 10,
+        "csvSha256": "47afb62728057cccf14fb91d22fb307b90fb95ec66fd8400a81ad627f28af9cc",
+        "csvBytesEqualToFrozenRun": true,
+        "coverageEqualExceptUris": true,
+        "errors": 0,
+        "seconds": 1.733
+      },
+      {
+        "project": "digital-hub",
+        "phase": "general-optimizations",
+        "variant": "edge-bounds",
+        "candidates": 9321,
+        "rows": 2669,
+        "csvSha256": "de62b6618056f5d2ba0dcd7054be73e67603f58682f6ab437363b1990fe311e5",
+        "csvBytesEqualToFrozenRun": true,
+        "coverageEqualExceptUris": true,
+        "errors": 0,
+        "seconds": 8.953
+      },
+      {
+        "project": "digital-hub",
+        "phase": "vertical-bound",
+        "variant": "vertical-skip",
+        "candidates": 9321,
+        "rows": 2665,
+        "csvSha256": "1481b6b9b30d00f71d6b410742361c9de2568958d1d3557598ef8e8f6cf66f0a",
+        "csvBytesEqualToFrozenRun": true,
+        "coverageEqualExceptUris": true,
+        "errors": 0,
+        "seconds": 8.629
+      },
+      {
+        "project": "wbdg-office",
+        "phase": "general-optimizations",
+        "variant": "edge-bounds",
+        "candidates": 7761,
+        "rows": 2691,
+        "csvSha256": "614c925437e32e03444271629b8eab02718aa7c63edd078fc39ba9420e8099f2",
+        "csvBytesEqualToFrozenRun": true,
+        "coverageEqualExceptUris": true,
+        "errors": 0,
+        "seconds": 8.845
+      },
+      {
+        "project": "wbdg-office",
+        "phase": "vertical-bound",
+        "variant": "vertical-skip",
+        "candidates": 7761,
+        "rows": 2651,
+        "csvSha256": "b6582d184814bdb7bd3ced827759ecedc68a06c3a5b7297e619f00e9d0d10aff",
+        "csvBytesEqualToFrozenRun": true,
+        "coverageEqualExceptUris": true,
+        "errors": 0,
+        "seconds": 6.456
+      },
+      {
+        "project": "byh-donauworth",
+        "phase": "general-optimizations",
+        "variant": "edge-bounds",
+        "candidates": 6198,
+        "rows": 1419,
+        "csvSha256": "7ba7206ef34dda1f50c8a9b63d93843a4e675ff0281233066adbdffa48a39a19",
+        "csvBytesEqualToFrozenRun": true,
+        "coverageEqualExceptUris": true,
+        "errors": 0,
+        "seconds": 9.032
+      },
+      {
+        "project": "byh-donauworth",
+        "phase": "vertical-bound",
+        "variant": "vertical-skip",
+        "candidates": 6198,
+        "rows": 1409,
+        "csvSha256": "306e810973abc49da7ea7b26d5ac792b5b58aa00358e84143c67b5cf79303cd6",
+        "csvBytesEqualToFrozenRun": true,
+        "coverageEqualExceptUris": true,
+        "errors": 0,
+        "seconds": 9.95
+      },
+      {
+        "project": "dmsw-v28",
+        "phase": "general-optimizations",
+        "variant": "edge-bounds",
+        "candidates": 94436,
+        "rows": 18087,
+        "csvSha256": "2f8707c366ef7993279515c5648a7b2750f9ee0c99ad63d1a69fd6aa83c39899",
+        "csvBytesEqualToFrozenRun": true,
+        "coverageEqualExceptUris": true,
+        "errors": 0,
+        "seconds": 105.434
+      },
+      {
+        "project": "dmsw-v28",
+        "phase": "vertical-bound",
+        "variant": "vertical-skip",
+        "candidates": 94436,
+        "rows": 18040,
+        "csvSha256": "2c0b5a1bf1101a25aff3e9347a02f5ecd94ff64532fd5a4f487350e854ef63e7",
+        "csvBytesEqualToFrozenRun": true,
+        "coverageEqualExceptUris": true,
+        "errors": 0,
+        "seconds": 90.608
+      },
+      {
+        "project": "bvg-v1",
+        "phase": "general-optimizations",
+        "variant": "edge-bounds",
+        "candidates": 47811,
+        "rows": 17727,
+        "csvSha256": "8bbe200ca291c65a6f5ed210a7b819a0f1716620b8b5795f0f5b7ecf7ff5e046",
+        "csvBytesEqualToFrozenRun": true,
+        "coverageEqualExceptUris": true,
+        "errors": 0,
+        "seconds": 121.655
+      },
+      {
+        "project": "bvg-v1",
+        "phase": "vertical-bound",
+        "variant": "vertical-skip",
+        "candidates": 47811,
+        "rows": 17725,
+        "csvSha256": "a196abd6a2ee2697199bacce16972d8808791e1398a4500830cc48976b7b8e53",
+        "csvBytesEqualToFrozenRun": true,
+        "coverageEqualExceptUris": true,
+        "errors": 0,
+        "seconds": 73.961
+      }
+    ]
+  },
+  "diffReview": {
+    "onlyResearchDirectoryChanged": true,
+    "authoredFilesWhitespaceCheckPassed": true,
+    "historicalSourceAndPatchFilesWithWhitespaceWarnings": 80,
+    "historicalWhitespacePreservedForByteIntegrity": true
+  },
+  "commands": [
+    "python3 research/narrow-phase/handoff.py verify",
+    "python3 research/narrow-phase/handoff.py prepare ../csg-research-runtime",
+    "python3 research/narrow-phase/handoff.py install ../csg-research-runtime",
+    "python3 research/narrow-phase/handoff.py check ../csg-research-runtime",
+    "python3 research/narrow-phase/handoff.py replay ../csg-research-runtime --run-name acceptance"
+  ],
+  "limits": [
+    "Full replays use historical research variants, not optimizations applied to the branch main source.",
+    "Each full replay is compared with its own variant frozen output. Vertical-skip is not equivalent to the old CSG output.",
+    "Recorded replay seconds validate completion and are not new A/B performance claims.",
+    "Four analytical CDT failures remain. Mirror, affine, input validity and diagnostic semantics still need formal implementation work.",
+    "No Cloud Run or browser validation, production optimization implementation, npm publication or push."
+  ],
+  "sourceLayoutUpdate": {
+    "date": "2026-09-08",
+    "previousHandoffCommit": "7e5d158f71133bea9c8f31af18b6fd298ff31b66",
+    "renamedSourceFiles": 1870,
+    "sourceBytesUnchanged": true,
+    "bundleManifestSha256": "ba3326c5219d187af29af3f8d6bee2778a41399499fad0016f893a011e50598d",
+    "verifiedOriginalFiles": 2890,
+    "preparedSourceFilesEquivalentToPreviouslyValidatedRuntime": 1992,
+    "rootTestsPassed": 70,
+    "rootTestsTodo": 1,
+    "rootTestsFailed": 0,
+    "eslintErrors": 0,
+    "eslintWarnings": 11,
+    "typescriptPassed": true,
+    "scope": "Restore native source extensions; update source storage paths and documentation links; exclude historical snapshots from root ESLint and Vitest discovery.",
+    "fullReplayEvidence": "Reuse the 12 full replays above: all source bytes, input bytes and prepared source files are unchanged apart from the runtime directory path. No new performance measurement."
+  }
+}

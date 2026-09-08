@@ -1,0 +1,32 @@
+--- a/backend/src/core/narrow/narrow-phase.js
++++ b/backend/src/core/narrow/narrow-phase.js
+@@ -524,10 +524,6 @@
+   geometry.setIndex(index instanceof Uint32Array
+     ? new THREE.Uint32BufferAttribute(index, 1)
+     : new THREE.Uint16BufferAttribute(index, 1));
+-  // computeVertexNormals reuses an existing normal attribute. Preallocate it as
+-  // float64; otherwise three.js creates a Float32BufferAttribute by default.
+-  geometry.setAttribute('normal', new THREE.BufferAttribute(new Float64Array(positionArray.length), 3));
+-  geometry.computeVertexNormals();
+   geometry.computeBoundingBox();
+   geometry.computeBoundingSphere();
+   return geometry;
+@@ -857,7 +853,7 @@
+ 
+ export function createCsgEvaluator() {
+   const evaluator = new Evaluator();
+-  evaluator.attributes = ['position', 'normal'];
++  evaluator.attributes = ['position'];
+   evaluator.useGroups = false;
+   evaluator.useCDTClipping = true;
+   return evaluator;
+--- a/csg/src/core/CDTTriangleSplitter.js
++++ b/csg/src/core/CDTTriangleSplitter.js
+@@ -18,6 +18,7 @@
+ function edgesToIndices( edges, outputVertices, outputIndices, epsilonScale ) {
+ 
+ 	_paramPool.clear();
++	_vectorPool.clear();
+ 
+ 	outputVertices.length = 0;
+ 	outputIndices.length = 0;

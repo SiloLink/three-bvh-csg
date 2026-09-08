@@ -1,0 +1,119 @@
+[
+  {
+    "variant": "pool",
+    "parent": "baseline",
+    "files": [
+      "csg/src/core/CDTTriangleSplitter.js"
+    ],
+    "patch": "pool.patch"
+  },
+  {
+    "variant": "adaptive",
+    "parent": "baseline",
+    "files": [
+      "backend/src/core/narrow/narrow-phase.js",
+      "csg/src/core/CDTTriangleSplitter.js",
+      "csg/src/core/operations/operationsUtils.js",
+      "csg/src/libs/cdt2d.js"
+    ],
+    "patch": "adaptive.patch"
+  },
+  {
+    "variant": "adaptive-only",
+    "parent": "pool",
+    "files": [
+      "csg/src/libs/cdt2d.js"
+    ],
+    "patch": "adaptive-only.patch"
+  },
+  {
+    "variant": "combined",
+    "parent": "baseline",
+    "files": [
+      "backend/src/core/narrow/narrow-phase.js",
+      "csg/src/core/CDTTriangleSplitter.js",
+      "csg/src/core/operations/operationsUtils.js"
+    ],
+    "patch": "combined.patch"
+  },
+  {
+    "variant": "position",
+    "parent": "baseline",
+    "files": [
+      "backend/src/core/narrow/narrow-phase.js",
+      "csg/src/core/CDTTriangleSplitter.js"
+    ],
+    "patch": "position.patch"
+  },
+  {
+    "variant": "no-delaunay",
+    "parent": "baseline",
+    "files": [
+      "backend/src/core/narrow/narrow-phase.js",
+      "csg/src/core/CDTTriangleSplitter.js",
+      "csg/src/core/operations/operationsUtils.js"
+    ],
+    "patch": "no-delaunay.patch"
+  },
+  {
+    "variant": "coplanar",
+    "parent": "baseline",
+    "files": [
+      "csg/src/core/CDTTriangleSplitter.js",
+      "csg/src/core/operations/operationsUtils.js"
+    ],
+    "patch": "coplanar.patch"
+  },
+  {
+    "variant": "ray-side",
+    "parent": "adaptive-only",
+    "files": [
+      "csg/src/core/operations/operationsUtils.js",
+      "csg/src/core/operations/raycastSide.js"
+    ],
+    "patch": "ray-side.patch"
+  },
+  {
+    "variant": "edge-bounds",
+    "parent": "adaptive-only",
+    "files": [
+      "csg/src/core/CDTTriangleSplitter.js",
+      "csg/src/core/edgeBounds.js"
+    ],
+    "patch": "edge-bounds.patch"
+  },
+  {
+    "variant": "generic-combined",
+    "parent": "edge-bounds",
+    "files": [
+      "csg/src/core/operations/operationsUtils.js",
+      "csg/src/core/operations/raycastSide.js"
+    ],
+    "patch": "generic-combined.patch"
+  },
+  {
+    "variant": "vertical-control",
+    "parent": "edge-bounds",
+    "files": [
+      "csg/src/core/Evaluator.js",
+      "csg/src/core/operations/operations.js"
+    ],
+    "patch": "vertical-control.patch"
+  },
+  {
+    "variant": "vertical-shadow",
+    "parent": "vertical-control",
+    "files": [
+      "backend/src/core/narrow/narrow-phase.js"
+    ],
+    "patch": "vertical-shadow.patch"
+  },
+  {
+    "variant": "vertical-skip",
+    "parent": "vertical-control",
+    "files": [
+      "backend/src/core/narrow/narrow-phase.js"
+    ],
+    "patch": "vertical-skip.patch"
+  }
+]

@@ -1,0 +1,20 @@
+import fs from 'node:fs';
+import { createNarrowPhaseRuntime } from '../root/variants/edge-bounds/backend/src/core/narrow/narrow-phase.js';
+import { Evaluator } from '../root/variants/edge-bounds/backend/node_modules/three-bvh-csg/src/index.js';
+const project = JSON.parse(fs.readFileSync(new URL('../full-project-bench/bvg-v1/project.json', import.meta.url)));
+const pairs = JSON.parse(fs.readFileSync(new URL('../full-project-bench/bvg-v1/hot-batches.json', import.meta.url))).batches.find(b => b.batchNumber === 241).pairs;
+const runtime = await createNarrowPhaseRuntime({ projectDescriptor: project, cacheObjects: true, narrowPhaseGeometryBudgetBytes: 512 * 1048576 });
+const original = Evaluator.prototype.evaluate, inputs = [];
+Evaluator.prototype.evaluate = function(a, b, ...rest) {
+ const boxes = [a, b].map(brush => { if (!brush.geometry.boundingBox) brush.geometry.computeBoundingBox(); return brush.geometry.boundingBox.clone().applyMatrix4(brush.matrixWorld); });
+ const overlap = boxes[0].clone().intersect(boxes[1]);
+ const x = Math.max(0, overlap.max.x - overlap.min.x), y = Math.max(0, overlap.max.y - overlap.min.y), z = Math.max(0, overlap.max.z - overlap.min.z);
+ inputs.push({ boxes: boxes.map(b => ({ min: b.min.toArray(), max: b.max.toArray() })), aabbOverlapMm: [x * 1000, y * 1000, z * 1000], xyDiagonalMm: Math.hypot(x, y) * 1000 });
+ return original.call(this, a, b, ...rest);
+};
+const r = await runtime.runPairs({ pairs, includeTraceFields: true });
+if (inputs.length !== r.timing.csgOperationCount || inputs.length !== pairs.length) throw new Error('Expected one CSG operation per hotspot pair');
+const rows = inputs.map((input, i) => ({ index: i, input, result: r.results[i] }));
+const summary = { pairCount: rows.length, finalPositive: r.results.filter(r => r.Collision === 'TRUE').length, toleranceFiltered: r.results.filter(r => r.Trace.filteredByTolerance).length, looseVerticalCandidates: inputs.filter(p => p.aabbOverlapMm[2] <= 10.1).length, looseHorizontalDiameterCandidates: inputs.filter(p => p.xyDiagonalMm <= 10.1).length, note: 'Opportunity count only; no skip applied. These counts do not prove floating-point output enclosure or preserve Duplicate exemptions.' };
+fs.writeFileSync(new URL('./tolerance-bound-opportunity.json', import.meta.url), JSON.stringify({ summary, rows }, null, 2));
+console.log(JSON.stringify(summary, null, 2)); runtime.dispose();

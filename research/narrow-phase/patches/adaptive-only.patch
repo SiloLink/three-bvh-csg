@@ -1,0 +1,16 @@
+--- a/csg/src/libs/cdt2d.js
++++ b/csg/src/libs/cdt2d.js
+@@ -1,3 +1,4 @@
++import { incircle as adaptiveInCircle } from '__CSG_RESEARCH_ROOT__/audits/csg-narrow-20260907/root/predicate-lab/node_modules/robust-predicates/index.js';
+ // Auto-generated ESM bundle of cdt2d
+ var __getOwnPropNames = Object.getOwnPropertyNames;
+ var __commonJS = (cb, mod) => function __require() {
+@@ -1134,7 +1135,7 @@
+ var require_delaunay = __commonJS({
+   "node_modules/cdt2d/lib/delaunay.js"(exports, module) {
+     "use strict";
+-    var inCircle = require_in_sphere()[4];
++    var inCircle = (a, b, c, d) => adaptiveInCircle(a[0], a[1], b[0], b[1], c[0], c[1], d[0], d[1]);
+     var bsearch = require_search_bounds();
+     module.exports = delaunayRefine;
+     function testFlip(points, triangulation, stack, a, b, x) {

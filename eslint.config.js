@@ -9,6 +9,7 @@ export default [
 	{
 		name: 'files to ignore',
 		ignores: [
+			'research/narrow-phase/scripts/**',
 			'**/node_modules/**',
 			'**/build/**',
 			'**/src/libs/**',

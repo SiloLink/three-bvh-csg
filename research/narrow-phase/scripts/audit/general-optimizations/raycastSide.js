@@ -1,0 +1,60 @@
+// Experimental CSG-only DoubleSide query for three-mesh-bvh 0.9.11.
+// Traversal order, hit coordinates, Euclidean distance and every tie comparison
+// follow raycastFirst exactly. Only unused hit attributes are omitted.
+import { Vector3, Triangle } from 'three';
+import { IS_LEAF, OFFSET, COUNT, SPLIT_AXIS, LEFT_NODE, RIGHT_NODE } from 'three-mesh-bvh/src/core/utils/nodeBufferUtils.js';
+import { BufferStack } from 'three-mesh-bvh/src/core/utils/BufferStack.js';
+import { intersectsNodeBounds } from 'three-mesh-bvh/src/core/utils/intersectUtils.js';
+const a = new Vector3(), b = new Vector3(), c = new Vector3();
+const point = new Vector3(), normal = new Vector3();
+const fields = ['x', 'y', 'z'];
+const pool = []; let used = 0;
+function loadTriangle(geometry, triangle) {
+ const index=geometry.index, pos=geometry.attributes.position, i=triangle*3;
+ a.fromBufferAttribute(pos,index?index.getX(i):i);
+ b.fromBufferAttribute(pos,index?index.getX(i+1):i+1);
+ c.fromBufferAttribute(pos,index?index.getX(i+2):i+2);
+}
+function visit(node, bvh, ray, near, far) {
+ const {float32Array:f,uint16Array:u16,uint32Array:u32}=BufferStack;
+ if(IS_LEAF(node*2,u16)) {
+  const offset=OFFSET(node,u32),end=offset+COUNT(node*2,u16);
+  let result=null,dist=Infinity;
+  for(let i=offset;i<end;i++){
+   const tri=bvh._indirectBuffer?bvh._indirectBuffer[i]:i;
+   loadTriangle(bvh.geometry,tri);
+   if(ray.intersectTriangle(a,b,c,false,point)===null)continue;
+   const d=ray.origin.distanceTo(point);
+   if(d<near||d>far)continue;
+   if(d<dist){
+    if(result===null){if(used===pool.length)pool.push({distance:0,x:0,y:0,z:0,faceIndex:0});result=pool[used++];}
+    result.distance=d;result.x=point.x;result.y=point.y;result.z=point.z;result.faceIndex=tri;dist=d;
+   }
+  }
+  return result;
+ }
+ const axis=SPLIT_AXIS(node,u32),field=fields[axis],leftToRight=ray.direction[field]>=0;
+ const first=leftToRight?LEFT_NODE(node):RIGHT_NODE(node,u32);
+ const second=leftToRight?RIGHT_NODE(node,u32):LEFT_NODE(node);
+ const one=intersectsNodeBounds(first,f,ray,near,far)?visit(first,bvh,ray,near,far):null;
+ if(one && (leftToRight?one[field]<=f[second+axis]:one[field]>=f[second+axis+3]))return one;
+ const two=intersectsNodeBounds(second,f,ray,near,far)?visit(second,bvh,ray,near,far):null;
+ return one&&two?(one.distance<=two.distance?one:two):(one||two||null);
+}
+export function raycastFirstMinimal(bvh,ray,near=0,far=Infinity){
+ used=0;let closest=null;
+ for(const root of bvh._roots){
+  BufferStack.setBuffer(root);
+  let result;
+  try{result=visit(0,bvh,ray,near,far);}finally{BufferStack.clearBuffer();}
+  if(result!==null&&(closest===null||result.distance<closest.distance))closest=result;
+ }
+ return closest;
+}
+export function raycastFirstSide(bvh,ray){
+ const hit=raycastFirstMinimal(bvh,ray);
+ if(hit===null)return 1;
+ loadTriangle(bvh.geometry,hit.faceIndex);
+ Triangle.getNormal(a,b,c,normal);
+ return ray.direction.dot(normal)>0?-1:1;
+}
