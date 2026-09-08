@@ -1,9 +1,11 @@
-import { Matrix4, Matrix3, Triangle, Vector3 } from 'three';
+import { Box3, Matrix4, Matrix3, Triangle, Vector3 } from 'three';
 import {
 	getHitSide,
 	collectIntersectingTriangles,
 	getOperationAction,
 	SKIP_TRI, INVERT_TRI,
+	BACK_SIDE,
+	FRONT_SIDE,
 	COPLANAR_ALIGNED,
 	COPLANAR_OPPOSITE,
 } from './operationsUtils.js';
@@ -28,6 +30,103 @@ const _normal = new Vector3();
 const _coplanarTrianglePool = new Pool( () => new Triangle() );
 const _coplanarNormal = new Vector3();
 const _coplanarTriangles = [];
+const _componentBounds = new Box3();
+const _componentBoundsPoint = new Vector3();
+
+export function resolveComponentVote( { triangleIds, classifyTriangle } ) {
+
+	let frontSideVotes = 0;
+	let backSideVotes = 0;
+	let remainingVotes = triangleIds.length;
+	let raycastCount = 0;
+	let earlyExit = false;
+
+	for ( let index = 0, l = triangleIds.length; index < l; index ++ ) {
+
+		remainingVotes --;
+		const triangleSide = classifyTriangle( triangleIds[ index ] );
+		if ( triangleSide !== null && triangleSide !== undefined ) {
+
+			raycastCount ++;
+			if ( triangleSide === BACK_SIDE ) {
+
+				backSideVotes ++;
+
+			} else {
+
+				frontSideVotes ++;
+
+			}
+
+		}
+
+		// BACK_SIDE requires a strict majority. FRONT_SIDE wins ties, so it may
+		// stop as soon as the remaining votes cannot make BACK_SIDE win.
+		if ( backSideVotes > frontSideVotes + remainingVotes ||
+			frontSideVotes >= backSideVotes + remainingVotes ) {
+
+			earlyExit = index < l - 1;
+			break;
+
+		}
+
+	}
+
+	return {
+		hitSide: backSideVotes > frontSideVotes ? BACK_SIDE : FRONT_SIDE,
+		frontSideVotes,
+		backSideVotes,
+		raycastCount,
+		earlyExit,
+	};
+
+}
+
+export function resolveComponentSide( {
+	triangleIds,
+	index,
+	position,
+	matrix,
+	targetBounds,
+	classifyTriangle,
+} ) {
+
+	_componentBounds.makeEmpty();
+	for ( let componentIndex = 0, l = triangleIds.length; componentIndex < l; componentIndex ++ ) {
+
+		const triangleId = triangleIds[ componentIndex ];
+		const i3 = 3 * triangleId;
+		for ( let corner = 0; corner < 3; corner ++ ) {
+
+			const vertexIndex = index ? index.getX( i3 + corner ) : i3 + corner;
+			_componentBoundsPoint
+				.fromBufferAttribute( position, vertexIndex )
+				.applyMatrix4( matrix );
+			_componentBounds.expandByPoint( _componentBoundsPoint );
+
+		}
+
+	}
+
+	if ( ! _componentBounds.intersectsBox( targetBounds ) ) {
+
+		return {
+			hitSide: FRONT_SIDE,
+			frontSideVotes: 0,
+			backSideVotes: 0,
+			raycastCount: 0,
+			earlyExit: false,
+			boundsRejected: true,
+		};
+
+	}
+
+	return {
+		...resolveComponentVote( { triangleIds, classifyTriangle } ),
+		boundsRejected: false,
+	};
+
+}
 
 // runs the given operation against a and b using the splitter and appending data to the
 // geometry builder.
@@ -48,8 +147,8 @@ export function performOperation(
 
 	let groupOffset;
 	groupOffset = useGroups ? 0 : - 1;
-	performWholeTriangleOperations( a, b, aIntersections, operations, false, builders, groupOffset );
-	performSplitTriangleOperations( a, b, aIntersections, operations, false, splitter, builders, groupOffset );
+	const aSplitTriangleIds = performSplitTriangleOperations( a, b, aIntersections, operations, false, splitter, builders, groupOffset );
+	performWholeTriangleOperations( a, b, aSplitTriangleIds, operations, false, builders, groupOffset );
 
 	// find whether the set of operations contains a non-hollow operations. If it does then we need
 	// to perform the second set of triangle additions
@@ -62,8 +161,8 @@ export function performOperation(
 		builders.forEach( builder => builder.clearIndexMap() );
 
 		groupOffset = useGroups ? a.geometry.groups.length || 1 : - 1;
-		performWholeTriangleOperations( b, a, bIntersections, operations, true, builders, groupOffset );
-		performSplitTriangleOperations( b, a, bIntersections, operations, true, splitter, builders, groupOffset );
+		const bSplitTriangleIds = performSplitTriangleOperations( b, a, bIntersections, operations, true, splitter, builders, groupOffset );
+		performWholeTriangleOperations( b, a, bSplitTriangleIds, operations, true, builders, groupOffset );
 
 	}
 
@@ -124,6 +223,7 @@ function performSplitTriangleOperations(
 	const bIndex = b.geometry.index;
 	const bPosition = b.geometry.attributes.position;
 	const splitIds = intersectionMap.ids;
+	const effectiveSplitIds = new Set();
 
 	// iterate over all split triangle indices
 	for ( let i = 0, l = splitIds.length; i < l; i ++ ) {
@@ -261,8 +361,11 @@ function performSplitTriangleOperations(
 		}
 
 
-		// cache all the attribute data in origA's local frame
 		const { triangles, triangleIndices = [], triangleConnectivity = [] } = splitter;
+
+		effectiveSplitIds.add( ia );
+
+		// cache all the attribute data in origA's local frame
 		for ( let i = 0, l = builders.length; i < l; i ++ ) {
 
 			builders[ i ].initInterpolatedAttributeData( a.geometry, _builderMatrix, _normalMatrix, ia0, ia1, ia2 );
@@ -406,7 +509,7 @@ function performSplitTriangleOperations(
 
 	}
 
-	return splitIds.length;
+	return effectiveSplitIds;
 
 }
 
@@ -416,7 +519,7 @@ function performSplitTriangleOperations(
 function performWholeTriangleOperations(
 	a,
 	b,
-	splitTriSet,
+	splitTriangleIds,
 	operations,
 	invert,
 	builders,
@@ -451,10 +554,11 @@ function performWholeTriangleOperations(
 	const aPosition = aAttributes.position;
 
 	const stack = [];
+	const componentTriangleIds = [];
 	const halfEdges = a.geometry.halfEdges;
 
 	// iterate over every whole triangle, skipping those that are clipped
-	const traversedSet = new Set( splitTriSet.ids );
+	const traversedSet = new Set( splitTriangleIds );
 	const triCount = getTriCount( a.geometry );
 	for ( let id = 0; id < triCount; id ++ ) {
 
@@ -472,38 +576,74 @@ function performWholeTriangleOperations(
 
 		}
 
-		// track the traversal
+		// Collect the complete unsplit half-edge component before classifying it.
+		// Split triangles remain traversal boundaries because they are already in
+		// traversedSet.
 		traversedSet.add( id );
 		stack.push( id );
+		componentTriangleIds.length = 0;
+		while ( stack.length > 0 ) {
 
-		// get the vertex indices
-		const i3 = 3 * id;
-		let i0 = i3 + 0;
-		let i1 = i3 + 1;
-		let i2 = i3 + 2;
-		if ( aIndex ) {
+			const currId = stack.pop();
+			componentTriangleIds.push( currId );
+			for ( let i = 0; i < 3; i ++ ) {
 
-			i0 = aIndex.getX( i0 );
-			i1 = aIndex.getX( i1 );
-			i2 = aIndex.getX( i2 );
+				const siblingId = halfEdges.getSiblingTriangleIndex( currId, i );
+				if ( siblingId !== - 1 && ! traversedSet.has( siblingId ) ) {
 
-		}
+					stack.push( siblingId );
+					traversedSet.add( siblingId );
 
-		// get the vertex position in the common frame (origA's local) for hit testing
-		_tri.a.fromBufferAttribute( aPosition, i0 );
-		_tri.b.fromBufferAttribute( aPosition, i1 );
-		_tri.c.fromBufferAttribute( aPosition, i2 );
-		if ( invert ) {
+				}
 
-			_tri.a.applyMatrix4( _matrix );
-			_tri.b.applyMatrix4( _matrix );
-			_tri.c.applyMatrix4( _matrix );
+			}
 
 		}
 
-		// get the side and decide if we need to cull the triangle based on the operation.
-		// When !invert, pass _matrix to transform the ray into brush B's BVH frame.
-		const hitSide = getHitSide( _tri, bBVH, invert ? null : _matrix );
+		function classifyTriangle( triangleId ) {
+
+			const i3 = 3 * triangleId;
+			let i0 = i3 + 0;
+			let i1 = i3 + 1;
+			let i2 = i3 + 2;
+			if ( aIndex ) {
+
+				i0 = aIndex.getX( i0 );
+				i1 = aIndex.getX( i1 );
+				i2 = aIndex.getX( i2 );
+
+			}
+
+			_tri.a.fromBufferAttribute( aPosition, i0 );
+			_tri.b.fromBufferAttribute( aPosition, i1 );
+			_tri.c.fromBufferAttribute( aPosition, i2 );
+			if ( isTriDegenerate( _tri ) ) {
+
+				return null;
+
+			}
+
+			if ( invert ) {
+
+				_tri.a.applyMatrix4( _matrix );
+				_tri.b.applyMatrix4( _matrix );
+				_tri.c.applyMatrix4( _matrix );
+
+			}
+
+			// When !invert, transform the ray into brush B's BVH frame.
+			return getHitSide( _tri, bBVH, invert ? null : _matrix );
+
+		}
+
+		const { hitSide } = resolveComponentSide( {
+			triangleIds: componentTriangleIds,
+			index: aIndex,
+			position: aPosition,
+			matrix: _matrix,
+			targetBounds: b.geometry.boundingBox,
+			classifyTriangle,
+		} );
 
 		// find all attribute sets to append the triangle to
 		_actions.length = 0;
@@ -520,21 +660,9 @@ function performWholeTriangleOperations(
 
 		}
 
-		// continue to iterate on the stack until every triangle has been handled
-		while ( stack.length > 0 ) {
+		for ( let componentIndex = 0, l = componentTriangleIds.length; componentIndex < l; componentIndex ++ ) {
 
-			const currId = stack.pop();
-			for ( let i = 0; i < 3; i ++ ) {
-
-				const sid = halfEdges.getSiblingTriangleIndex( currId, i );
-				if ( sid !== - 1 && ! traversedSet.has( sid ) ) {
-
-					stack.push( sid );
-					traversedSet.add( sid );
-
-				}
-
-			}
+			const currId = componentTriangleIds[ componentIndex ];
 
 			if ( _builders.length !== 0 ) {
 
