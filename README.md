@@ -1,10 +1,14 @@
-# three-bvh-csg
+# @silolink/three-bvh-csg
 
-[![npm version](https://img.shields.io/npm/v/three-bvh-csg.svg?style=flat-square)](https://www.npmjs.com/package/three-bvh-csg)
-[![build](https://img.shields.io/github/actions/workflow/status/gkjohnson/three-bvh-csg/node.js.yml?style=flat-square&label=build&branch=main)](https://github.com/gkjohnson/three-bvh-csg/actions)
-[![github](https://flat.badgen.net/badge/icon/github?icon=github&label)](https://github.com/gkjohnson/three-bvh-csg/)
+[![npm version](https://img.shields.io/npm/v/@silolink/three-bvh-csg.svg?style=flat-square)](https://www.npmjs.com/package/@silolink/three-bvh-csg)
+[![build](https://img.shields.io/github/actions/workflow/status/SiloLink/three-bvh-csg/node.js.yml?style=flat-square&label=build&branch=main)](https://github.com/SiloLink/three-bvh-csg/actions)
+[![github](https://flat.badgen.net/badge/icon/github?icon=github&label)](https://github.com/SiloLink/three-bvh-csg/)
 [![twitter](https://flat.badgen.net/badge/twitter/@garrettkjohnson/?icon&label)](https://twitter.com/garrettkjohnson)
 [![sponsors](https://img.shields.io/github/sponsors/gkjohnson?style=flat-square&color=1da1f2)](https://github.com/sponsors/gkjohnson/)
+
+SiloLink maintains this fork of [three-bvh-csg by Garrett Johnson](https://github.com/gkjohnson/three-bvh-csg). The upstream MIT license and author attribution are retained. Report fork-specific issues in the [SiloLink issue tracker](https://github.com/SiloLink/three-bvh-csg/issues).
+
+Release history and known limitations are documented in the [changelog](./CHANGELOG.md).
 
 ![](./docs/csg-banner.png)
 
@@ -42,8 +46,12 @@ See projects like [Manifold CAD](https://github.com/elalish/manifold) for CAD op
 
 # Use
 
+```sh
+npm install @silolink/three-bvh-csg three three-mesh-bvh
+```
+
 ```js
-import { SUBTRACTION, Brush, Evaluator } from 'three-bvh-csg';
+import { SUBTRACTION, Brush, Evaluator } from '@silolink/three-bvh-csg';
 import { MeshStandardMaterial, Mesh, SphereGeometry, BoxGeometry } from 'three';
 
 const brush1 = new Brush( new SphereGeometry() );

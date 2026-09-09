@@ -5,13 +5,26 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [@silolink/three-bvh-csg 0.0.18] - Unreleased
+
+First scoped release, based on SiloLink main `8a53705` and upstream `three-bvh-csg` 0.0.18.
+
 ### Changed
+- Publish under `@silolink/three-bvh-csg` with SiloLink repository metadata and the original MIT attribution.
 - Require three-mesh-bvh 0.9.11 or newer for the targetLeafSize BVH option.
+- Declare the esbuild 0.25.9 build dependency explicitly.
 
 ### Fixed
+- Declare the existing Evaluator.useCDTClipping option for TypeScript consumers.
 - Align reusable attribute buffers so they can switch safely to Float64Array.
 - Classify connected whole-triangle components by majority vote and reject disjoint component bounds before raycasting.
-- Keep non-coplanar singleton fragments in their original half-edge component.
+- Preserve split-fragment handling for non-coplanar singleton intersections, including cuts along existing edges.
+
+### Known limitations
+- Independent analytical box checks reproduce four existing CDT failures: intersection and union volumes are incorrect in two subdivided-box configurations.
+- Mirrored coplanar classification and preservation of shear in result transforms still have known defects in this baseline.
+- Geometry must satisfy the documented input topology requirements; degenerate or non-manifold inputs are not repaired automatically.
 
 ## [0.0.18] - 2026-02-17
 ### Added

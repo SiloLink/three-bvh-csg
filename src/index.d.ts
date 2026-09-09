@@ -22,6 +22,7 @@ export const HOLLOW_INTERSECTION: CSGOperation;
 export class Evaluator {
 
 	attributes: string[];
+	useCDTClipping: boolean;
 	useGroups: boolean;
 	consolidateMaterials: boolean;
 	debug: OperationDebugData;
