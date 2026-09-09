@@ -59,4 +59,32 @@ describe.each( [ false, true ] )( 'affine results, CDT=%s', useCDTClipping => {
 
 	} );
 
+	it( 'supports matrix-based repositioning without losing shear', () => {
+
+		const transform = new Matrix4().set( 1, 1, 0, 3, 0, 1, 0, 2, 0, 0, 1, 1, 0, 0, 0, 1 );
+		const a = box( 2, Float64Array, transform );
+		const b = box( 1, Float64Array, transform );
+		const evaluator = new Evaluator();
+		evaluator.attributes = [ 'position' ];
+		evaluator.useCDTClipping = useCDTClipping;
+		evaluator.useGroups = false;
+
+		const result = evaluator.evaluate( a, b, INTERSECTION );
+		result.position.set( - 3.5, 2, 3.5 );
+		result.matrix.setPosition( result.position );
+		result.matrixWorldNeedsUpdate = true;
+		result.updateMatrixWorld();
+
+		const expected = transform.clone().setPosition( result.position );
+		expect( result.matrixAutoUpdate ).toBe( false );
+		for ( let element = 0; element < 16; element ++ ) {
+
+			expect( result.matrixWorld.elements[ element ] ).toBeCloseTo( expected.elements[ element ], 12 );
+
+		}
+
+		expect( computeMeshVolume( result ) ).toBeCloseTo( 1, 6 );
+
+	} );
+
 } );

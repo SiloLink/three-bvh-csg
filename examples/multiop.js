@@ -153,6 +153,15 @@ async function init() {
 
 }
 
+function setResultPosition( target, x, z ) {
+
+	target.position.x = x;
+	target.position.z = z;
+	target.matrix.setPosition( target.position );
+	target.matrixWorldNeedsUpdate = true;
+
+}
+
 function render() {
 
 	requestAnimationFrame( render );
@@ -172,17 +181,10 @@ function render() {
 	brush1.material = mat1;
 	brush2.material = mat2;
 	csgEvaluator.evaluate( brush1, brush2, [ SUBTRACTION, INTERSECTION, ADDITION, REVERSE_SUBTRACTION ], [ result, result2, result3, result4 ] );
-	result.position.x = - 3.5;
-	result.position.z = 3.5;
-
-	result2.position.x = 3.5;
-	result2.position.z = 3.5;
-
-	result3.position.x = - 3.5;
-	result3.position.z = - 3.5;
-
-	result4.position.x = 3.5;
-	result4.position.z = - 3.5;
+	setResultPosition( result, - 3.5, 3.5 );
+	setResultPosition( result2, 3.5, 3.5 );
+	setResultPosition( result3, - 3.5, - 3.5 );
+	setResultPosition( result4, 3.5, - 3.5 );
 
 	brush1.material = transMat1;
 	brush2.material = transMat2;
@@ -190,6 +192,5 @@ function render() {
 	renderer.render( scene, camera );
 
 }
-
 
 
