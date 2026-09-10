@@ -199,6 +199,9 @@ function performSplitTriangleOperations(
 		.copy( _matrix )
 		.invert();
 
+	// A reflection reverses the winding of the triangle transformed into the common frame.
+	const relativeOrientation = _matrix.determinant() < 0 ? - 1 : 1;
+
 	// matrix for geometry construction to transform vertices in the brush A's frame
 	if ( invert ) {
 
@@ -399,7 +402,7 @@ function performSplitTriangleOperations(
 				if ( cpt.containsPoint( _midpoint ) ) {
 
 					cpt.getNormal( _coplanarNormal );
-					hitSide = _normal.dot( _coplanarNormal ) > 0 ? COPLANAR_ALIGNED : COPLANAR_OPPOSITE;
+					hitSide = _normal.dot( _coplanarNormal ) * relativeOrientation > 0 ? COPLANAR_ALIGNED : COPLANAR_OPPOSITE;
 					break;
 
 				}
@@ -716,4 +719,3 @@ function performWholeTriangleOperations(
 	}
 
 }
-

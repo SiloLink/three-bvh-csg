@@ -1,3 +1,4 @@
+import { writeEdgeBounds, separatedEdges, separatedPoint } from './edgeBounds.js';
 import { Vector3, Line3 } from 'three';
 import { ExtendedTriangle } from 'three-mesh-bvh';
 import cdt2d from '../libs/cdt2d.js';
@@ -15,9 +16,15 @@ const _vec2 = new Vector3();
 const _paramPool = new Pool( () => ( { param: 0, index: 0 } ) );
 const _vectorPool = new Pool( () => new Vector3() );
 
+const edgeBounds = [];
+
 function edgesToIndices( edges, outputVertices, outputIndices, epsilonScale ) {
 
+	const threshold = RELATIVE_EPSILON * epsilonScale;
+	for ( let i = 0; i < edges.length; i ++ ) writeEdgeBounds( edges[ i ], edgeBounds, i * 4 );
+
 	_paramPool.clear();
+	_vectorPool.clear();
 
 	outputVertices.length = 0;
 	outputIndices.length = 0;
@@ -36,6 +43,7 @@ function edgesToIndices( edges, outputVertices, outputIndices, epsilonScale ) {
 		const edge0 = edges[ i ];
 		for ( let i1 = i + 1; i1 < l; i1 ++ ) {
 
+			if ( separatedEdges( edgeBounds, i * 4, i1 * 4, threshold ) ) continue;
 			const edge1 = edges[ i1 ];
 			const dist = edge0.distanceSqToLine3( edge1, _vec, _vec2 );
 			if ( dist < RELATIVE_EPSILON * epsilonScale ) {
@@ -58,6 +66,7 @@ function edgesToIndices( edges, outputVertices, outputIndices, epsilonScale ) {
 		for ( let v = 0, lv = outputVertices.length; v < lv; v ++ ) {
 
 			const vec = outputVertices[ v ];
+			if ( separatedPoint( edgeBounds, i * 4, vec, threshold ) ) continue;
 			const param = edge.closestPointToPointParameter( vec, true );
 			edge.at( param, _vec );
 			if ( vec.distanceToSquared( _vec ) < RELATIVE_EPSILON * epsilonScale ) {
