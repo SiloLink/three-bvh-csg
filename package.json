@@ -1,6 +1,6 @@
 {
   "name": "@silolink/three-bvh-csg",
-  "version": "0.0.18",
+  "version": "0.1.0",
   "description": "SiloLink fork of three-bvh-csg for BVH-based constructive solid geometry",
   "main": "build/index.umd.cjs",
   "module": "src/index.js",

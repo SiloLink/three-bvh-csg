@@ -6,7 +6,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [@silolink/three-bvh-csg 0.0.18] - Unreleased
+## [@silolink/three-bvh-csg 0.1.0] - 2026-09-10
+
+### Changed
+- Preserve the full affine transform of CSG results, including shear and existing target parents.
+- Keep result matrices authoritative with `matrixAutoUpdate = false`; callers that opt into position, quaternion, and scale updates may lose shear.
+- Reduce CDT triangulation cost with adaptive robust incircle predicates, conservative edge and point bounds, and projection-vector reuse.
+
+### Fixed
+- Classify coplanar triangles correctly under mirrored relative transforms.
+- Release pooled CDT projection vectors between triangulations.
+
+### Known limitations
+- Independent analytical box checks reproduce four existing CDT failures: intersection and union volumes are incorrect in two subdivided-box configurations.
+- Geometry must satisfy the documented input topology requirements; degenerate or non-manifold inputs are not repaired automatically.
+
+## [@silolink/three-bvh-csg 0.0.18] - 2026-09-08
 
 First scoped release, based on SiloLink main `8a53705` and upstream `three-bvh-csg` 0.0.18.
 
